@@ -9,7 +9,7 @@ mysql:
  addr: "mysql:3306"
  user: "root"
  password: "123"
- db: "video_server"
+ db: "vista"
  charset: "utf8mb4"
 
 redis:
@@ -36,9 +36,9 @@ zinc:
  username: "admin"
  password: "Complexpass#123"
 
-# consul:
-#   host: "localhost"
-#   port: 8500
+consul:
+  host: "localhost"
+  port: 8500
 
 static-oss:
  domain: "http://127.0.0.1:9000"
