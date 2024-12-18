@@ -3,17 +3,18 @@ package services
 import (
 	"context"
 	"fmt"
-	"github.com/solost23/go_interface/gen_go/common"
-	"github.com/solost23/go_interface/gen_go/oss"
 	"io/ioutil"
 	"mime/multipart"
 	"path"
 	"strconv"
 	"strings"
 	"time"
-	"video_server/global"
-	"video_server/pkg/constants"
-	"video_server/pkg/utils"
+	"vista/global"
+	"vista/pkg/constants"
+	"vista/pkg/utils"
+
+	"github.com/solost23/go_interface/gen_go/common"
+	"github.com/solost23/go_interface/gen_go/oss"
 
 	"github.com/gabriel-vasile/mimetype"
 )

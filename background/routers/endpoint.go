@@ -1,11 +1,12 @@
 package routers
 
 import (
+	_ "vista/docs" // 必须要导入生成的docs文档包
+	"vista/pkg/middlewares"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "video_server/docs" // 必须要导入生成的docs文档包
-	"video_server/pkg/middlewares"
 )
 
 func SetRouters(r *gin.Engine) {

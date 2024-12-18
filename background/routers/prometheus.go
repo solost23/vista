@@ -1,9 +1,10 @@
 package routers
 
 import (
+	"vista/global"
+
 	"github.com/gin-gonic/gin"
 	ginPrometheus "github.com/zsais/go-gin-prometheus"
-	"twitta/global"
 )
 
 // SetPrometheus sets up prometheus metrics for gin

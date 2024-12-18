@@ -1,7 +1,7 @@
 package forms
 
 import (
-	"video_server/pkg/utils"
+	"vista/pkg/utils"
 )
 
 type RoleInsertForm struct {

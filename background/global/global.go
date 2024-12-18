@@ -1,11 +1,12 @@
 package global
 
 import (
+	"vista/configs"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/minio/minio-go"
 	"github.com/solost23/go_interface/gen_go/oss"
 	"gorm.io/gorm"
-	"video_server/configs"
 )
 
 var (

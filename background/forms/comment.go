@@ -1,6 +1,6 @@
 package forms
 
-import "video_server/pkg/utils"
+import "vista/pkg/utils"
 
 type CommentCreateForm struct {
 	VideoID  *uint   `json:"videoId" binding:"required"`

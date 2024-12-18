@@ -3,8 +3,9 @@ package services
 import (
 	"context"
 	"fmt"
+	"vista/global"
+
 	client "github.com/zinclabs/sdk-go-zincsearch"
-	"video_server/global"
 )
 
 type Zinc struct {

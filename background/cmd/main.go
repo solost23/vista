@@ -3,8 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"os"
@@ -12,11 +10,14 @@ import (
 	"path"
 	"syscall"
 	"time"
-	"video_server/global"
-	"video_server/global/initialize"
-	"video_server/pkg/models"
-	"video_server/routers"
-	"video_server/scheduler"
+	"vista/global"
+	"vista/global/initialize"
+	"vista/pkg/models"
+	"vista/routers"
+	"vista/scheduler"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 var (

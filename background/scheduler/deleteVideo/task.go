@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gorm.io/gorm"
 	"log"
 	"net/url"
 	"os"
-	"video_server/global"
+	"vista/global"
 
-	"video_server/pkg/models"
+	"gorm.io/gorm"
+
+	"vista/pkg/models"
 )
 
 type Task struct {

@@ -1,4 +1,4 @@
-module video_server
+module vista
 
 go 1.19
 

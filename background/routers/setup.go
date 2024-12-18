@@ -1,8 +1,9 @@
 package routers
 
 import (
+	"vista/global"
+
 	"github.com/gin-gonic/gin"
-	"video_server/global"
 )
 
 func Setup(app *gin.Engine) {

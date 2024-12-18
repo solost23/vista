@@ -2,9 +2,10 @@ package initialize
 
 import (
 	"fmt"
+	"vista/global"
+
 	"github.com/spf13/viper"
 	_ "github.com/spf13/viper/remote"
-	"video_server/global"
 )
 
 const (

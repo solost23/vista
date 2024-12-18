@@ -1,14 +1,15 @@
 package initialize
 
 import (
-	"github.com/solost23/tools/mysql"
-	"gorm.io/gorm/logger"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-	"video_server/global"
+	"vista/global"
+
+	"github.com/solost23/tools/mysql"
+	"gorm.io/gorm/logger"
 )
 
 func InitMysql() {

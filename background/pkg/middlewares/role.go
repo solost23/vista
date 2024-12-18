@@ -3,12 +3,13 @@ package middlewares
 import (
 	"errors"
 	"fmt"
+	"vista/global"
+	"vista/pkg/response"
+	"vista/pkg/utils"
+
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
-	"video_server/global"
-	"video_server/pkg/response"
-	"video_server/pkg/utils"
 )
 
 func AuthCheckRole() gin.HandlerFunc {

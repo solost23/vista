@@ -1,8 +1,8 @@
 package forms
 
 import (
-	"video_server/pkg/models"
-	"video_server/pkg/utils"
+	"vista/pkg/models"
+	"vista/pkg/utils"
 )
 
 type RegisterForm struct {
