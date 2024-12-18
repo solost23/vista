@@ -37,7 +37,7 @@ zinc:
  password: "Complexpass#123"
 
 consul:
-  host: "localhost"
+  host: "consul"
   port: 8500
 
 static-oss:
