@@ -1,0 +1,21 @@
+FROM golang:alpine AS builder 
+
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=arm64\
+    GOPROXY=https://goproxy.cn/
+
+WORKDIR /build
+COPY ./../background .
+
+RUN go build -o app ./cmd/main.go 
+RUN apk add tzdata 
+
+FROM scratch 
+
+COPY --from=builder /build/app /
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo 
+
+EXPOSE 8081
+CMD ["/app"]
