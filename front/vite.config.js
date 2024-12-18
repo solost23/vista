@@ -5,10 +5,11 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
 
+  // 仅仅是开发服务器代理配置，打包为静态文件运行时不生效
   server: {
     port: 5173, //端口号
     strictPort: true, //是否是严格的端口号，如果true，端口号被占用的情况下，vite会退出
-    host: "localhost",
+    host: "127.0.0.1",
     cors: true, //为开发服务器配置 CORS , 默认启用并允许任何源
     https: false, //是否支持http2 如果配置成true 会打开https://localhost:3001/xxx;
     open: true, //是否自动打开浏览器
@@ -16,7 +17,7 @@ export default defineConfig({
 
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:80/api/vista/",
+        target: "http://127.0.0.1:80/api",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

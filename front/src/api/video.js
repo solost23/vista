@@ -3,7 +3,7 @@ import { request } from "../utils/request.js"
 export function getVideos(params) {
     return request(
         {
-            url: "/api/videos/search", 
+            url: "/api/vista/videos/search", 
             method: "get",
             params: params,  
         }
@@ -13,7 +13,7 @@ export function getVideos(params) {
 export function getVideoInfo(id) {
     return request(
         {
-            url: "/api/videos/" + id, 
+            url: "/api/vista/videos/" + id, 
             method: "get", 
         }
     )
@@ -22,7 +22,7 @@ export function getVideoInfo(id) {
 export function getVideoComments(params) {
     return request(
         {
-            url: "/api/comments", 
+            url: "/api/vista/comments", 
             method: "get", 
         }
     )
@@ -31,7 +31,7 @@ export function getVideoComments(params) {
 export function createVideoInfo(data) {
     return request(
         {
-            url: "/api/videos", 
+            url: "/api/vista/videos", 
             method: "post", 
             data: data, 
             headers: {
@@ -44,7 +44,7 @@ export function createVideoInfo(data) {
 export function uploadVideo(data) {
     return request(
         {
-            url: "/api/videos/vid", 
+            url: "/api/vista/videos/vid", 
             method: "post", 
             data: data, 
             headers: {
@@ -57,7 +57,7 @@ export function uploadVideo(data) {
 export function uploadImage(data) {
     return request(
         {
-            url: "/api/videos/img", 
+            url: "/api/vista/videos/img", 
             method: "post", 
             data: data, 
             headers: {
@@ -71,7 +71,7 @@ export function uploadImage(data) {
 export function getVideosByParams(params) {
     return request (
         {
-            url:"/api/videos", 
+            url:"/api/vista/videos", 
             method: "get", 
             params: params, 
         }
