@@ -2,12 +2,6 @@ package server
 
 import (
 	"fmt"
-	"github.com/gookit/slog"
-	"github.com/hashicorp/consul/api"
-	uuid "github.com/satori/go.uuid"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
-	"google.golang.org/grpc/health/grpc_health_v1"
 	"net"
 	"os"
 	"os/signal"
@@ -20,6 +14,14 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/gookit/slog"
+	"github.com/hashicorp/consul/api"
+	uuid "github.com/satori/go.uuid"
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type Server struct {
@@ -41,6 +43,9 @@ func (s *Server) Run() {
 	// 初始化mysql redis链接
 	mdb, err := models.InitMysql(s.serverConfig.MySQLConfig)
 	must(err)
+	if err := mdb.AutoMigrate(&models.OSSFile{}); err != nil {
+		zap.S().Panic(err)
+	}
 	minio, err := minio_storage.NewMinio(s.serverConfig.MinioConfig)
 	must(err)
 	// 初始化 handler

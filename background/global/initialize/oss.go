@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/consul/api"
 	_ "github.com/mbobakov/grpc-consul-resolver"
 	"github.com/solost23/go_interface/gen_go/oss"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -24,7 +25,7 @@ func InitOSSClient() {
 		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
 	)
 	if err != nil {
-		panic(err)
+		zap.S().Panic("dial failed to consul service oss_service")
 	}
 
 	global.OSSSrvClient = oss.NewOssClient(cc)
