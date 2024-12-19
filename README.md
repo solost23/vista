@@ -2,6 +2,6 @@
 
 ## Quick Start
 ```bash
-cd front && make build && cd .. && docker compose up -d 
+cd front && yarn install && yarn run build && cd .. && docker compose up -d 
 ```
-**将配置文件拷贝到 consul 中**
+**将服务配置文件拷贝到 consul 中**

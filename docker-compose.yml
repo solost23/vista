@@ -27,8 +27,8 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - "./background/configs:/configs"
-      - "./background/certs:/etc/ssl/certs"
+      - "./background/app/configs:/configs"
+      - "./background/app/certs:/etc/ssl/certs"
     networks:
       - app-net
   
@@ -41,8 +41,8 @@ services:
     environment:
       TZ: "Asia/Shanghai"
     volumes:
-      - "./service/oss/configs:/configs"
-      - "./service/oss/certs:/etc/ssl/certs"
+      - "./background/service/oss/configs:/configs"
+      - "./background/service/oss/certs:/etc/ssl/certs"
     networks:
       - app-net
 
@@ -55,8 +55,8 @@ services:
     environment:
       TZ: "Asia/Shanghai"
     volumes:
-      - "./service/oss/configs:/configs"
-      - "./service/oss/certs:/etc/ssl/certs"
+      - "./background/service/oss/configs:/configs"
+      - "./background/service/oss/certs:/etc/ssl/certs"
     networks:
       - app-net
 

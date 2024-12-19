@@ -7,7 +7,7 @@ ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn/
 
 WORKDIR /build
-COPY ./../service/oss .
+COPY ./../background/service/oss .
 
 RUN go build -o app ./cmd/main.go 
 RUN apk add tzdata 
