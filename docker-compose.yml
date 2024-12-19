@@ -19,7 +19,7 @@ services:
   app:
     build: 
       context: . 
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./docker/DockerfileAPP
     container_name: vista-app 
     restart: always 
     environment:
@@ -29,6 +29,34 @@ services:
     volumes:
       - "./background/configs:/configs"
       - "./background/certs:/etc/ssl/certs"
+    networks:
+      - app-net
+  
+  oss-0:
+    build: 
+      context: . 
+      dockerfile: ./docker/DockerfileOSS
+    container_name: vista-oss-0
+    restart: always 
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - "./service/oss/configs:/configs"
+      - "./service/oss/certs:/etc/ssl/certs"
+    networks:
+      - app-net
+
+  oss-1:
+    build: 
+      context: . 
+      dockerfile: ./docker/DockerfileOSS
+    container_name: vista-oss-1
+    restart: always 
+    environment:
+      TZ: "Asia/Shanghai"
+    volumes:
+      - "./service/oss/configs:/configs"
+      - "./service/oss/certs:/etc/ssl/certs"
     networks:
       - app-net
 
@@ -83,6 +111,14 @@ services:
     volumes:
       - "./lib/minio/data1:/data1"
       - "./lib/minio/data2:/data2"
+    networks:
+      - app-net
+
+  consul:
+    image: consul:1.15.4
+    container_name: vista-consul
+    ports:
+      - "8500:8500"
     networks:
       - app-net
 

@@ -331,7 +331,7 @@ func (s *Service) Detail(c *gin.Context, id uint) (response *forms.ListRecord, e
 }
 
 func (s *Service) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
-	folder := "video.server.users.avatar"
+	folder := "vista.users.avatar"
 
 	url, err := UploadImg(0, folder, file.Filename, file, "image")
 	if err != nil {

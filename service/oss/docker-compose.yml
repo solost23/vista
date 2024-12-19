@@ -1,0 +1,66 @@
+version: "3.5"
+
+services:
+  app:
+    build: "."
+    restart: always
+    volumes:
+      - "/Users/ty/server/oss_service/configs:/configs"
+      - "/Users/ty/server/oss_service/logs:/logs"
+        # 挂载证书
+      - "/Users/ty/server/oss_service/certs:/etc/ssl/certs/"
+    depends_on:
+      - mariadb
+      - consul
+      - minio
+    networks:
+      - app-net
+
+  mariadb:
+    image: mariadb:10.5.5
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "123"
+      MYSQL_ROOT_PASSWORD: "123"
+      TZ: "Asia/Shanghai"
+      # 初始化数据库
+      MYSQL_DATABASE: "oss_file"
+    ports:
+      - "3306:3306"
+    volumes:
+      - "/Users/ty/mariadb/data:/var/lib/mysql"
+      - "/Users/ty/mariadb/log:/var/log/mysql"
+      - "/Users/ty/mariadb/conf:/etc/mysql"
+    networks:
+      - app_net
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    restart: always
+    command: server --console-address ":9001" http://minio/data{1...2}
+    environment:
+      MINIO_ROOT_USER: "minioadmin"
+      MINIO_ROOT_PASSWORD: "minioadmin"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - "/Users/ty/minio/data1:/data1"
+      - "/Users/ty/minio/data2:/data2"
+    networks:
+      - app_net
+
+  consul:
+    image: consul:latest
+    container_name: consul
+    ports:
+      - "8500:8500"
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    external: true

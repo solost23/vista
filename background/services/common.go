@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"path"
@@ -27,7 +28,7 @@ func UploadImg(userId uint, folderName string, postFilename string, file *multip
 
 	defer func() { _ = fileHandle.Close() }()
 
-	b, err := ioutil.ReadAll(fileHandle)
+	b, err := io.ReadAll(fileHandle)
 	if err != nil {
 		return "", err
 	}
