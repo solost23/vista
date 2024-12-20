@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"vista/forms"
 	"vista/pkg/response"
 	"vista/pkg/utils"
 	"vista/services"
@@ -38,19 +37,19 @@ func videoUploadVid(c *gin.Context) {
 	response.Success(c, result)
 }
 
-func videoInsert(c *gin.Context) {
-	params := &forms.VideoInsertForm{}
-	if err := utils.DefaultGetValidParams(c, params); err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
-	id, err := (&services.Service{}).VideoInsert(c, params)
-	if err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
-	response.Success(c, id)
-}
+// func videoInsert(c *gin.Context) {
+// 	params := &forms.VideoInsertForm{}
+// 	if err := utils.DefaultGetValidParams(c, params); err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
+// 	id, err := (&services.Service{}).VideoInsert(c, params)
+// 	if err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
+// 	response.Success(c, id)
+// }
 
 func videoDelete(c *gin.Context) {
 	UIdForm := &utils.UIdForm{}
@@ -65,57 +64,57 @@ func videoDelete(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-func videoDetail(c *gin.Context) {
-	UIdForm := &utils.UIdForm{}
-	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
-	result, err := (&services.Service{}).VideoDetail(c, UIdForm.Id)
-	if err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
-	response.Success(c, result)
-}
+// func videoDetail(c *gin.Context) {
+// 	UIdForm := &utils.UIdForm{}
+// 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
+// 	result, err := (&services.Service{}).VideoDetail(c, UIdForm.Id)
+// 	if err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
+// 	response.Success(c, result)
+// }
 
-func videoList(c *gin.Context) {
-	params := &forms.VideoListForm{}
-	if err := utils.DefaultGetValidParams(c, params); err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
-	if params.Page == 0 {
-		params.Page = 1
-	}
-	if params.Size == 0 {
-		params.Size = 10
-	}
-	result, err := (&services.Service{}).VideoList(c, params)
-	if err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
-	response.Success(c, result)
-}
+// func videoList(c *gin.Context) {
+// 	params := &forms.VideoListForm{}
+// 	if err := utils.DefaultGetValidParams(c, params); err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
+// 	if params.Page == 0 {
+// 		params.Page = 1
+// 	}
+// 	if params.Size == 0 {
+// 		params.Size = 10
+// 	}
+// 	result, err := (&services.Service{}).VideoList(c, params)
+// 	if err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
+// 	response.Success(c, result)
+// }
 
-func searchVideo(c *gin.Context) {
-	params := &forms.SearchForm{}
-	if err := utils.DefaultGetValidParams(c, params); err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
-	if params.Page <= 0 {
-		params.Page = 1
-	}
-	if params.Size <= 0 {
-		params.Size = 10
-	}
-	result, err := (&services.Service{}).SearchVideo(c, params)
-	if err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
+// func searchVideo(c *gin.Context) {
+// 	params := &forms.SearchForm{}
+// 	if err := utils.DefaultGetValidParams(c, params); err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
+// 	if params.Page <= 0 {
+// 		params.Page = 1
+// 	}
+// 	if params.Size <= 0 {
+// 		params.Size = 10
+// 	}
+// 	result, err := (&services.Service{}).SearchVideo(c, params)
+// 	if err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
 
-	response.Success(c, result)
-}
+// 	response.Success(c, result)
+// }

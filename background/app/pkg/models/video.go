@@ -1,19 +1,40 @@
 package models
 
 import (
+	"time"
+
 	"gorm.io/gorm"
+)
+
+const (
+	VideoLanguageChinese = iota
+	VideoLanguageEnglish
+	VideoLanguageJapan
+)
+
+const (
+	VideoRegionChina = iota
+	VideoRegionAmerica
+	VideoRegionJapan
+)
+
+const (
+	VideoSeasonUpdate = iota
+	VideoSeasonFinish
 )
 
 type Video struct {
 	CreatorBase
-	UserId       uint   `json:"userId" gorm:"column:user_id;type:bigint unsigned;comment: 用户 ID"`
-	CategoryId   uint   `json:"categoryId" gorm:"column:category_id;type:bigint unsigned;comment: 视频分类 ID"`
-	Title        string `json:"title" gorm:"column:title;type:varchar(100);comment: 视频标题"`
-	Introduce    string `json:"introduce" gorm:"column:introduce;type:varchar(500);comment: 视频介绍"`
-	ImageUrl     string `json:"imageUrl" gorm:"column:image_url;type:text;comment: 视频封面oss地址"`
-	VideoUrl     string `json:"videoUrl" gorm:"column:video_url;type:text;comment: 视频流oss地址"`
-	ThumbCount   int64  `json:"thumbCount" gorm:"column:thumb_count;type:bigint unsigned;comment: 点赞数;default:0"`
-	CommentCount int64  `json:"commentCount" gorm:"column:comment_count;type:bigint unsigned;comment: 评论数;default:0"`
+	Title     string    `json:"title" gorm:"column:title;type:varchar(100);comment: 视频标题"`
+	Introduce string    `json:"introduce" gorm:"column:introduce;type:varchar(500);comment: 视频介绍"`
+	Cover     string    `json:"cover" gorm:"column:cover;type:varchar(500);comment: 视频封面"`
+	Language  int       `json:"language" gorm:"column:language;type:tinyint unsigned;comment: 语言 0-简体中文 1-英文 2-日文"`
+	Master    string    `json:"master" gorm:"column:master;type:varchar(500);comment: 作者"`
+	FirstDate time.Time `json:"firstDate" gorm:"column:first_date;type:datetime;comment: 首播时间"`
+	Rank      float64   `json:"rank" gorm:"column:rank;type:float;comment: 排名"`
+	Region    int       `json:"region" gorm:"column:region;type:tinyint unsigned;comment: 地区 0-中国 1-美国 2-日本"`
+	Season    int       `json:"season" gorm:"column:season;type:tinyint unsigned;comment: 动漫状态 0-更新 1-完结"`
+	Actors    string    `json:"actors" gorm:"column:actors;type:varchar(100);comment: 声优名称列表"`
 }
 
 func (v *Video) TableName() string {

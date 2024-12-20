@@ -2,7 +2,7 @@ package configs
 
 type ServerConfig struct {
 	Version          string        `mapstructure:"version"`
-	DebugMode        string        `mapstructure:"debug_mode"`
+	Mode             string        `mapstructure:"mode"`
 	TimeLocation     string        `mapstructure:"time_location"`
 	Addr             string        `mapstructure:"addr"`
 	PrometheusEnable bool          `mapstructure:"prometheus_enable"`

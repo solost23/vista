@@ -1,21 +1,33 @@
 package routers
 
 import (
+	"net/http"
+	"vista/controllers"
 	_ "vista/docs" // 必须要导入生成的docs文档包
-	"vista/pkg/middlewares"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetRouters(r *gin.Engine) {
-	group := r.Group("api/vista")
-	initNoAuthRouter(group)
+func SetRouters(router *gin.Engine) {
+	// 心跳检测
+	router.GET("", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "success",
+		})
+	})
+
+	apiGroup := router.Group("api/vista")
+
+	// 视频相关
+	controllers.VideoRegister(apiGroup.Group("video"))
+
+	// initNoAuthRouter(group)
 	// 注意 role 需要再思考一下，不一定要放在这里
 	//group.Use(jwt.JWTAuth, role.CheckRole)
-	group.Use(middlewares.JWTAuth())
-	initAuthRouter(group)
+	// group.Use(middlewares.JWTAuth())
+	// initAuthRouter(group)
 }
 
 func initNoAuthRouter(group *gin.RouterGroup) {
@@ -29,7 +41,7 @@ func initNoAuthRouter(group *gin.RouterGroup) {
 	group.GET("categories/search", searchCategory)
 	// 搜索视频 - 全局搜索
 	// 首页 支持获取所有视频
-	group.GET("videos/search", searchVideo)
+	// group.GET("videos/search", searchVideo)
 
 	group.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
@@ -76,14 +88,14 @@ func initAuthVideoRouter(group *gin.RouterGroup) {
 		// 上传视频流接口
 		video.POST("vid", videoUploadVid)
 		// 提交视频信息接口
-		video.POST("", videoInsert)
+		// video.POST("", videoInsert)
 		// 删除就是将video信息的delete_status的字段修改为已删除
-		video.DELETE(":id", videoDelete)
+		// video.DELETE(":id", videoDelete)
 		// 获取单个视频信息(视频流直接就可以通过video_url字段访问到，所以不用处理文件)
-		video.GET(":id", videoDetail)
+		// video.GET(":id", videoDetail)
 
 		// 根据不同条件查询视频列表
-		video.GET("", videoList)
+		// video.GET("", videoList)
 	}
 }
 

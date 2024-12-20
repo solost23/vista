@@ -16,7 +16,7 @@ type User struct {
 	Username      string    `json:"username" gorm:"column:username;type:varchar(100);comment: 用户名"`
 	Password      string    `json:"password" gorm:"column:password;type:varchar(300);comment: 用户密码"`
 	Nickname      string    `json:"nickname" gorm:"column:nickname;type:varchar(100);comment: 昵称"`
-	Role          uint      `json:"role" gorm:"column:role;type:tinyint unsigned;default:1;comment: 用户角色 0-管理员 1-普通用户"`
+	Role          uint      `json:"role" gorm:"column:role;type:tinyint unsigned;comment: 用户角色 0-管理员 1-普通用户"`
 	Avatar        string    `json:"avatar" gorm:"column:avatar;type:text;comment: 用户头像"`
 	Introduce     string    `json:"introduce" gorm:"column:introduce;type:varchar(300);comment: 用户介绍"`
 	FansCount     int64     `json:"fansCount" gorm:"column:fans_count;type:bigint unsigned;comment: 用户粉丝数;default:0"`

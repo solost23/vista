@@ -226,7 +226,8 @@ func GPaginatorSelectOrder[T any](db *gorm.DB, t *T, params *ListPageInput, colu
 	return results, total, nil
 }
 
-func GWhereCount[T any](db *gorm.DB, t *T, query string, args ...any) (int64, error) {
+func GWhereCount[T any](db *gorm.DB, query string, args ...any) (int64, error) {
+	var t T
 	var count int64
 	err := db.Model(t).Where(query, args...).Count(&count).Error
 	if err != nil {
@@ -453,7 +454,8 @@ func GInsert[T any](db *gorm.DB, t *T) error {
 	return db.Model(t).Create(t).Error
 }
 
-func GBatchInsert[T any](db *gorm.DB, t *T, data any) error {
+func GBatchInsert[T any](db *gorm.DB, data any) error {
+	var t T
 	return db.Model(t).CreateInBatches(data, 1000).Error
 }
 
