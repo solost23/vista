@@ -141,7 +141,7 @@ func (s *Service) SearchCategory(c *gin.Context, params *forms.SearchForm) (*for
 	for _, searchResult := range searchResults {
 		categoryIds = append(categoryIds, *searchResult.Id)
 	}
-	sqlCategories, err := models.GWhereAllSelectOrder(global.DB, &models.Category{}, "*", "id DESC", "id IN ?", categoryIds)
+	sqlCategories, err := models.GWhereAllSelectOrder[models.Category](global.DB, "*", "id DESC", "id IN ?", categoryIds)
 	if err != nil {
 		return nil, err
 	}

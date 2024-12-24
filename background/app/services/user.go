@@ -67,7 +67,7 @@ func (s *Service) Register(c *gin.Context, params *forms.RegisterForm) (err erro
 func (s *Service) Login(c *gin.Context, params *forms.LoginForm) (response *forms.LoginResponse, err error) {
 	db := global.DB
 
-	sqlUser, err := models.GWhereFirstSelect(db, &models.User{}, "*", "user_name = ?", *params.Username)
+	sqlUser, err := models.GWhereFirstSelect[models.User](db, "*", "user_name = ?", *params.Username)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
@@ -257,7 +257,7 @@ func (s *Service) DeleteUser(c *gin.Context, id uint) (err error) {
 func (s *Service) UpdateUser(c *gin.Context, id uint, params *forms.UserUpdateForm) (err error) {
 	db := global.DB
 
-	sqlUser, err := models.GWhereFirstSelect(db, &models.User{}, "id", "id = ?", id)
+	sqlUser, err := models.GWhereFirstSelect[models.User](db, "id", "id = ?", id)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -275,7 +275,7 @@ func (s *Service) UpdateUser(c *gin.Context, id uint, params *forms.UserUpdateFo
 	if err != nil {
 		return err
 	}
-	sqlUser, err = models.GWhereFirstSelect(db, &models.User{}, "*", "id = ?", id)
+	sqlUser, err = models.GWhereFirstSelect[models.User](db, "*", "id = ?", id)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -303,7 +303,7 @@ func (s *Service) UpdateUser(c *gin.Context, id uint, params *forms.UserUpdateFo
 func (s *Service) Detail(c *gin.Context, id uint) (response *forms.ListRecord, err error) {
 	db := global.DB
 
-	sqlUser, err := models.GWhereFirstSelect(db, &models.User{}, "*", "id = ?", id)
+	sqlUser, err := models.GWhereFirstSelect[models.User](db, "*", "id = ?", id)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
@@ -355,7 +355,7 @@ func (s *Service) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.L
 		id, _ := strconv.Atoi(*searchResult.Id)
 		userIds = append(userIds, uint(id))
 	}
-	sqlUsers, err := models.GWhereAllSelectOrder(db, &models.User{}, "*", "id DESC", "id IN ?", userIds)
+	sqlUsers, err := models.GWhereAllSelectOrder[models.User](db, "*", "id DESC", "id IN ?", userIds)
 	if err != nil {
 		return nil, err
 	}

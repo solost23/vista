@@ -47,11 +47,30 @@ func (*VideoController) search(c *gin.Context) {
 }
 
 func (*VideoController) detail(c *gin.Context) {
+	UID := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UID); err != nil {
+		response.Error(c, constants.BadRequestCode, err)
+		return
+	}
 
+	videoService.Detail(c, UID.Id)
 }
 
 func (*VideoController) filter(c *gin.Context) {
+	params := &forms.VideoFilterForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, constants.BadRequestCode, err)
+		return
+	}
 
+	if params.Page == 0 {
+		params.Page = 1
+	}
+	if params.Size == 0 {
+		params.Size = 20
+	}
+
+	videoService.Filter(c, params)
 }
 
 func (*VideoController) playlist(c *gin.Context) {

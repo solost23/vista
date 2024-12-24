@@ -132,7 +132,7 @@ func (s *Service) CommentList(c *gin.Context, params *forms.CommentListForm) (re
 	for _, comment := range sqlComments {
 		creatorIds = append(creatorIds, comment.CreatorId)
 	}
-	sqlUsers, err := models.GWhereAllSelectOrder(db, &models.User{}, "", "", "id IN ?", creatorIds)
+	sqlUsers, err := models.GWhereAllSelectOrder[models.User](db, "", "", "id IN ?", creatorIds)
 	if err != nil {
 		return nil, err
 	}

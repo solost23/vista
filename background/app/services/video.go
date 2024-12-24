@@ -1,9 +1,11 @@
 package services
 
 import (
+	"errors"
 	"mime/multipart"
 	"strconv"
 	"strings"
+	"time"
 	"vista/forms"
 	"vista/global"
 	"vista/pkg/constants"
@@ -12,6 +14,8 @@ import (
 	"vista/pkg/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/now"
+	"gorm.io/gorm"
 )
 
 // func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (response *forms.VideoListResponse, err error) {
@@ -454,6 +458,191 @@ func (*VideoService) Search(c *gin.Context, params *forms.VideoSearchForm) {
 	}
 
 	response.Success(c, forms.VideoSearch{
+		PageList: utils.PageList{
+			Size:    params.Size,
+			Pages:   pages,
+			Total:   total,
+			Current: params.Page,
+		},
+		Records: records,
+	})
+}
+
+func (*VideoService) Detail(c *gin.Context, videoId uint) {
+	db := global.DB
+	sqlVideo, err := models.GWhereFirstSelect[models.Video](db, "*", "id = ?", videoId)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.BadRequestCode, errors.New("视频不存在"))
+		return
+	}
+	// 查找标签列表
+	sqlRelation, err := models.GWhereAllSelect[models.CategoryVideo](db, "category_id,video_id", "video_id = ?", videoId)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	categoryIds := make([]uint, 0, len(sqlRelation))
+	for i := 0; i != len(sqlRelation); i++ {
+		categoryIds = append(categoryIds, sqlRelation[i].CategoryID)
+	}
+	sqlCategories, err := models.GWhereAllSelect[models.Category](db, "id,title", "id IN (?)", categoryIds)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	categories := make([]string, 0, len(sqlCategories))
+	for i := 0; i != len(sqlCategories); i++ {
+		categories = append(categories, sqlCategories[i].Title)
+	}
+	// 查找播放列表
+	sqlPlaylists, err := models.GWhereAllSelectOrder[models.Playlist](db, "*", "sort ASC", "video_id = ?", videoId)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	playlist := make([]forms.Playlist, 0, len(sqlPlaylists))
+	for i := 0; i != len(sqlPlaylists); i++ {
+		playlist = append(playlist, forms.Playlist{
+			ID:    sqlPlaylists[i].ID,
+			Title: sqlPlaylists[i].Title,
+			Link:  utils.FulfillImageOSSPrefix(sqlPlaylists[i].Link),
+			Sort:  sqlPlaylists[i].Sort,
+		})
+	}
+
+	// 拼接参数返回
+	lang := ""
+	switch sqlVideo.Language {
+	case models.VideoLanguageChinese:
+		lang = "简体中文"
+	case models.VideoLanguageEnglish:
+		lang = "英文"
+	case models.VideoLanguageJapan:
+		lang = "日文"
+	default:
+		response.Error(c, constants.BadRequestCode, errors.New("语言类型错误"))
+		return
+	}
+
+	region := ""
+	switch sqlVideo.Region {
+	case models.VideoRegionChina:
+		region = "中国"
+	case models.VideoRegionJapan:
+		region = "日本"
+	case models.VideoRegionAmerica:
+		region = "美国"
+	default:
+		response.Error(c, constants.BadRequestCode, errors.New("地区类型错误"))
+		return
+	}
+
+	season := "更新"
+	if sqlVideo.Season == models.VideoSeasonFinish {
+		season = "完结"
+	}
+
+	response.Success(c, forms.VideoDetail{
+		Actors:     strings.Split(sqlVideo.Actors, ","),
+		Categories: categories,
+		Cover:      utils.FulfillImageOSSPrefix(sqlVideo.Cover),
+		Date:       sqlVideo.FirstDate.Format(constants.DateTime),
+		Lang:       lang,
+		Master:     sqlVideo.Master,
+		Playlist:   playlist,
+		Score:      sqlVideo.Score,
+		Rank:       sqlVideo.Ranking,
+		Region:     region,
+		Season:     season,
+		Title:      sqlVideo.Title,
+	})
+}
+
+func (*VideoService) Filter(c *gin.Context, params *forms.VideoFilterForm) {
+	query := []string{"1 = ?"}
+	args := []any{1}
+	order := "created_at desc"
+
+	db := global.DB
+	if params.Type != 0 {
+		// 暂时忽略
+	}
+	if params.Category != "" {
+		sqlCategory, err := models.GWhereFirstSelect[models.Category](db, "id", "title = ?", params.Category)
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			response.Error(c, constants.InternalServerErrorCode, err)
+			return
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) || sqlCategory == nil {
+			response.Error(c, constants.BadRequestCode, errors.New("分类不存在"))
+			return
+		}
+		sqlRelation, err := models.GWhereAllSelect[models.CategoryVideo](db, "video_id", "category_id = ?", sqlCategory.ID)
+		if err != nil {
+			response.Error(c, constants.InternalServerErrorCode, err)
+			return
+		}
+		videoIds := make([]uint, 0, len(sqlRelation))
+		for i := 0; i != len(sqlRelation); i++ {
+			videoIds = append(videoIds, sqlRelation[i].VideoID)
+		}
+
+		query = append(query, "id IN (?)")
+		args = append(args, videoIds)
+	}
+	if params.Order != "" {
+		switch params.Order {
+		case "更新时间":
+			order = "updated_at DESC"
+		case "评分":
+			order = "score DESC"
+		case "总排行":
+			order = "ranking DESC"
+		default:
+			response.Error(c, constants.BadRequestCode, errors.New("order 参数错误"))
+			return
+		}
+	}
+	if params.Letter != "" {
+		query = append(query, "title LIKE ?")
+		args = append(args, params.Letter+"%")
+	}
+	if params.Year != 0 {
+		paramTime := time.Date(params.Year, 1, 1, 0, 0, 0, 0, time.Local)
+		begin := now.With(paramTime).BeginningOfYear()
+		end := now.With(paramTime).EndOfYear()
+		query = append(query, "first_date BETWEEN ? AND ?")
+		args = append(args, begin, end)
+	}
+
+	sqlVideos, total, pages, err := models.GPaginateOrder[models.Video](db, &models.ListPageInput{
+		Page: params.Page,
+		Size: params.Size,
+	}, order, strings.Join(query, " AND "), args...)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	records := make([]forms.VideoFilterRecord, 0, len(sqlVideos))
+	for i := 0; i != len(sqlVideos); i++ {
+		season := "更新"
+		if sqlVideos[i].Season == models.VideoSeasonFinish {
+			season = "完结"
+		}
+		records = append(records, forms.VideoFilterRecord{
+			Cover:  utils.FulfillImageOSSPrefix(sqlVideos[i].Cover),
+			ID:     sqlVideos[i].ID,
+			Season: season,
+			Title:  sqlVideos[i].Title,
+		})
+	}
+
+	response.Success(c, forms.VideoFilter{
 		PageList: utils.PageList{
 			Size:    params.Size,
 			Pages:   pages,

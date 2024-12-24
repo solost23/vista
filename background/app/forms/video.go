@@ -89,7 +89,8 @@ type VideoDetail struct {
 	Lang       string     `json:"lang"`
 	Master     string     `json:"master"`
 	Playlist   []Playlist `json:"playlist"`
-	Rank       string     `json:"rank"`
+	Score      float64    `json:"score"`
+	Rank       int        `json:"rank"`
 	Region     string     `json:"region"`
 	Season     string     `json:"season"`
 	Title      string     `json:"title"`
@@ -99,6 +100,7 @@ type Playlist struct {
 	ID    uint   `json:"id"`
 	Title string `json:"title"`
 	Link  string `json:"link"`
+	Sort  int    `json:"sort"`
 }
 
 type VideoConfig struct {

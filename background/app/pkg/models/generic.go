@@ -86,7 +86,8 @@ func quoteColumns(columns string) string {
 	return strings.Join(quotedColumns, ", ")
 }
 
-func GWhereFirstSelect[T any](db *gorm.DB, t *T, columns string, query string, args ...any) (*T, error) {
+func GWhereFirstSelect[T any](db *gorm.DB, columns string, query string, args ...any) (*T, error) {
+	var t T
 	var result T
 	q := db.Model(t)
 
@@ -133,12 +134,11 @@ func GWhereExist[T any](db *gorm.DB, t *T, query string, args ...any) (bool, err
 
 // GWhereAllSelect cannot use for tables without "ID" column.
 func GWhereAllSelect[T any](db *gorm.DB, columns string, query string, args ...any) ([]T, error) {
-	var t T
-
-	return GWhereAllSelectOrder(db, &t, columns, "", query, args...)
+	return GWhereAllSelectOrder[T](db, columns, "", query, args...)
 }
 
-func GWhereAllSelectOrder[T any](db *gorm.DB, t *T, columns string, order string, query string, args ...any) ([]T, error) {
+func GWhereAllSelectOrder[T any](db *gorm.DB, columns string, order string, query string, args ...any) ([]T, error) {
+	var t T
 	var results []T
 	q := db.Model(t)
 
@@ -160,11 +160,11 @@ func GWhereAllSelectOrder[T any](db *gorm.DB, t *T, columns string, order string
 
 // GPaginate cannot use for tables without "ID" column.
 func GPaginate[T any](db *gorm.DB, params *ListPageInput, query string, args ...any) ([]*T, int64, int64, error) {
-	var t T
-	return GPaginateOrder(db, &t, params, "", query, args...)
+	return GPaginateOrder[T](db, params, "", query, args...)
 }
 
-func GPaginateOrder[T any](db *gorm.DB, t *T, params *ListPageInput, order, query string, args ...any) ([]*T, int64, int64, error) {
+func GPaginateOrder[T any](db *gorm.DB, params *ListPageInput, order, query string, args ...any) ([]*T, int64, int64, error) {
+	var t T
 	var results []*T
 	var count int64
 
@@ -192,11 +192,11 @@ func GPaginateOrder[T any](db *gorm.DB, t *T, params *ListPageInput, order, quer
 
 // GPaginatorSelect cannot use for tables without "ID" column.
 func GPaginatorSelect[T any](db *gorm.DB, params *ListPageInput, columns string, query string, args ...any) ([]T, int64, error) {
-	var t T
-	return GPaginatorSelectOrder(db, &t, params, columns, "", query, args...)
+	return GPaginatorSelectOrder[T](db, params, columns, "", query, args...)
 }
 
-func GPaginatorSelectOrder[T any](db *gorm.DB, t *T, params *ListPageInput, columns string, order string, query string, args ...any) ([]T, int64, error) {
+func GPaginatorSelectOrder[T any](db *gorm.DB, params *ListPageInput, columns string, order string, query string, args ...any) ([]T, int64, error) {
+	var t T
 	var results []T
 	var total int64
 	page := params.Page

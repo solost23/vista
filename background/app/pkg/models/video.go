@@ -31,7 +31,8 @@ type Video struct {
 	Language  int       `json:"language" gorm:"column:language;type:tinyint unsigned;comment: 语言 0-简体中文 1-英文 2-日文"`
 	Master    string    `json:"master" gorm:"column:master;type:varchar(500);comment: 作者"`
 	FirstDate time.Time `json:"firstDate" gorm:"column:first_date;type:datetime;comment: 首播时间"`
-	Rank      float64   `json:"rank" gorm:"column:rank;type:float;comment: 排名"`
+	Ranking   int       `json:"ranking" gorm:"column:ranking;type:int;comment: 排名"`
+	Score     float64   `json:"score" gorm:"column:score;type:float;comment: 评分"`
 	Region    int       `json:"region" gorm:"column:region;type:tinyint unsigned;comment: 地区 0-中国 1-美国 2-日本"`
 	Season    int       `json:"season" gorm:"column:season;type:tinyint unsigned;comment: 动漫状态 0-更新 1-完结"`
 	Actors    string    `json:"actors" gorm:"column:actors;type:varchar(100);comment: 声优名称列表"`
