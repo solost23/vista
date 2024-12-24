@@ -62,11 +62,11 @@ type VideoSearchRecord struct {
 
 type VideoFilterForm struct {
 	utils.PageForm
-	Type     int    `form:"type"`
-	Category string `form:"category"`
-	Order    string `form:"order"`
-	Letter   string `form:"letter"`
-	Year     int    `form:"year"`
+	Type       int    `form:"type"`
+	CategoryID uint   `form:"category"`
+	Order      string `form:"order"`
+	Letter     string `form:"letter"`
+	Year       int    `form:"year"`
 }
 
 type VideoFilter struct {
@@ -82,25 +82,25 @@ type VideoFilterRecord struct {
 }
 
 type VideoDetail struct {
-	Actors     []string   `json:"actors"`
-	Categories []string   `json:"categories"`
-	Cover      string     `json:"cover"`
-	Date       string     `json:"date"`
-	Lang       string     `json:"lang"`
-	Master     string     `json:"master"`
-	Playlist   []Playlist `json:"playlist"`
-	Score      float64    `json:"score"`
-	Rank       int        `json:"rank"`
-	Region     string     `json:"region"`
-	Season     string     `json:"season"`
-	Title      string     `json:"title"`
+	Actors     []string              `json:"actors"`
+	Categories []string              `json:"categories"`
+	Cover      string                `json:"cover"`
+	Date       string                `json:"date"`
+	Lang       string                `json:"lang"`
+	Master     string                `json:"master"`
+	Playlist   map[string][]Playlist `json:"playlist"`
+	Score      float64               `json:"score"`
+	Rank       int                   `json:"rank"`
+	Region     string                `json:"region"`
+	Season     string                `json:"season"`
+	Title      string                `json:"title"`
 }
 
 type Playlist struct {
-	ID    uint   `json:"id"`
-	Title string `json:"title"`
-	Link  string `json:"link"`
-	Sort  int    `json:"sort"`
+	ID    uint     `json:"id"`
+	Title string   `json:"key"`
+	Link  []string `json:"value"`
+	Sort  int      `json:"sort"`
 }
 
 type VideoConfig struct {
@@ -114,8 +114,8 @@ type FilterConfig struct {
 }
 
 type Category struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
+	ID   uint   `json:"classid"`
+	Name string `json:"classname"`
 }
 
 type VideoIndex struct {

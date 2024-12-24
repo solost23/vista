@@ -95,6 +95,15 @@ export default defineConfig({
     }
   },
   server: {
-    port: 1007
+    host: "0.0.0.0", 
+    port: 1007, 
+    // 配置开发时跨域
+    proxy: {
+      '/api': {
+        target: "http://localhost:8081", 
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), 
+      }
+    }
   }
 })

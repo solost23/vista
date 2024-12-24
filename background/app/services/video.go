@@ -510,7 +510,7 @@ func (*VideoService) Detail(c *gin.Context, videoId uint) {
 		playlist = append(playlist, forms.Playlist{
 			ID:    sqlPlaylists[i].ID,
 			Title: sqlPlaylists[i].Title,
-			Link:  utils.FulfillImageOSSPrefix(sqlPlaylists[i].Link),
+			Link:  []string{utils.FulfillImageOSSPrefix(sqlPlaylists[i].Link)},
 			Sort:  sqlPlaylists[i].Sort,
 		})
 	}
@@ -547,6 +547,8 @@ func (*VideoService) Detail(c *gin.Context, videoId uint) {
 		season = "完结"
 	}
 
+	playlistMap := map[string][]forms.Playlist{}
+	playlistMap["plyalist"] = playlist
 	response.Success(c, forms.VideoDetail{
 		Actors:     strings.Split(sqlVideo.Actors, ","),
 		Categories: categories,
@@ -554,7 +556,7 @@ func (*VideoService) Detail(c *gin.Context, videoId uint) {
 		Date:       sqlVideo.FirstDate.Format(constants.DateTime),
 		Lang:       lang,
 		Master:     sqlVideo.Master,
-		Playlist:   playlist,
+		Playlist:   playlistMap,
 		Score:      sqlVideo.Score,
 		Rank:       sqlVideo.Ranking,
 		Region:     region,
@@ -572,17 +574,8 @@ func (*VideoService) Filter(c *gin.Context, params *forms.VideoFilterForm) {
 	if params.Type != 0 {
 		// 暂时忽略
 	}
-	if params.Category != "" {
-		sqlCategory, err := models.GWhereFirstSelect[models.Category](db, "id", "title = ?", params.Category)
-		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-			response.Error(c, constants.InternalServerErrorCode, err)
-			return
-		}
-		if errors.Is(err, gorm.ErrRecordNotFound) || sqlCategory == nil {
-			response.Error(c, constants.BadRequestCode, errors.New("分类不存在"))
-			return
-		}
-		sqlRelation, err := models.GWhereAllSelect[models.CategoryVideo](db, "video_id", "category_id = ?", sqlCategory.ID)
+	if params.CategoryID != 0 {
+		sqlRelation, err := models.GWhereAllSelect[models.CategoryVideo](db, "video_id", "category_id = ?", params.CategoryID)
 		if err != nil {
 			response.Error(c, constants.InternalServerErrorCode, err)
 			return
@@ -597,11 +590,11 @@ func (*VideoService) Filter(c *gin.Context, params *forms.VideoFilterForm) {
 	}
 	if params.Order != "" {
 		switch params.Order {
-		case "更新时间":
+		case "time":
 			order = "updated_at DESC"
-		case "评分":
+		case "score":
 			order = "score DESC"
-		case "总排行":
+		case "hits":
 			order = "ranking DESC"
 		default:
 			response.Error(c, constants.BadRequestCode, errors.New("order 参数错误"))
@@ -666,7 +659,7 @@ func (*VideoService) Playlist(c *gin.Context, videoId uint) {
 	for i := 0; i != len(sqlPlaylist); i++ {
 		records = append(records, forms.Playlist{
 			ID:    sqlPlaylist[i].ID,
-			Link:  utils.FulfillImageOSSPrefix(sqlPlaylist[i].Link),
+			Link:  []string{utils.FulfillImageOSSPrefix(sqlPlaylist[i].Link)},
 			Sort:  sqlPlaylist[i].Sort,
 			Title: sqlPlaylist[i].Title,
 		})

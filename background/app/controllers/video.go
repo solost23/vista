@@ -5,6 +5,7 @@ import (
 	"vista/pkg/constants"
 	"vista/pkg/response"
 	"vista/pkg/utils"
+	"vista/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,6 +15,10 @@ type VideoController struct{}
 func VideoRegister(router *gin.RouterGroup) {
 	controller := &VideoController{}
 
+	// 上传视频封面
+	router.POST("upload/cover", controller.uploadCover)
+	// 上传视频
+	router.POST("upload", controller.upload)
 	// 根据名称获取视频列表
 	router.GET("search", controller.search)
 	// 获取动漫详情
@@ -27,6 +32,40 @@ func VideoRegister(router *gin.RouterGroup) {
 	router.GET("config", controller.config)
 	// 获取混合列表
 	router.GET("index", controller.index)
+}
+
+func (*VideoController) uploadCover(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		response.Error(c, constants.BadRequestCode, err)
+		return
+	}
+
+	folder := "vista.static.cover"
+	url, err := services.UploadImg(0, folder, file.Filename, file, "image")
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	response.Success(c, utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(url)))
+}
+
+func (*VideoController) upload(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		response.Error(c, constants.BadRequestCode, err)
+		return
+	}
+
+	folder := "vista.dynamic.video"
+	url, err := services.UploadImg(0, folder, file.Filename, file, "video")
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	response.Success(c, utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(url)))
 }
 
 func (*VideoController) search(c *gin.Context) {

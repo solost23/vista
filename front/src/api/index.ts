@@ -22,7 +22,7 @@ export async function searchComic(param: {
         data: { results, pagetotal }
       }
     } = await getax<ApiType.Search>(
-      `api/search/${param.name}?page=${param.page}`
+      `api/vista/video/search?page=${param.page}&name=${param.name}`
     )
     if (results instanceof Array) {
       return {
@@ -33,7 +33,7 @@ export async function searchComic(param: {
       throw newError()
     }
   } catch {
-    badRequestNotify('api/search')
+    badRequestNotify('api/vista/video/search')
     return {
       data: [],
       total: 0
@@ -62,7 +62,7 @@ export async function filterComic(param: {
   try {
     const api = Object.entries(param).reduce((total, [k, v]) => {
       return v !== '' ? `${total}&${k}=${v}` : total
-    }, 'api/filter?')
+    }, 'api/vista/video/filter?')
 
     const { data } = await getax<ApiType.Filter>(api)
     return {
@@ -75,7 +75,7 @@ export async function filterComic(param: {
       total: data?.data?.total || 0
     }
   } catch {
-    badRequestNotify('api/filter')
+    badRequestNotify('api/vista/vieo/filter')
     return {
       data: [],
       total: 0
@@ -94,7 +94,7 @@ export async function getComicMain(
   try {
     const {
       data: { data }
-    } = await getax<ApiType.GetAnime>(`api/getAnime/${id}`)
+    } = await getax<ApiType.GetAnime>(`api/vista/video/${id}`)
 
     const playlist = new Map()
     Object.entries(data.playlist || {}).forEach(([k, v]) => {
@@ -121,7 +121,7 @@ export async function getComicMain(
       cates: data.categories || []
     }
   } catch {
-    badRequestNotify('api/getAnime')
+    badRequestNotify('api/vista/video/:id')
     return null
   }
 }
@@ -137,7 +137,7 @@ export async function getVideoUrl(
   try {
     const {
       data: { data }
-    } = await await getax<ApiType.GetVideo>(`api/getVideo/${key}`)
+    } = await await getax<ApiType.GetVideo>(`api/vista/video/${key}/playlist`)
     return Object.entries(data).map(([k, v]) => ({
       key: k,
       value: (v instanceof Array ? v : []).map((url) =>
@@ -145,7 +145,7 @@ export async function getVideoUrl(
       ) as string[]
     }))
   } catch (e) {
-    badRequestNotify('api/getVideo')
+    badRequestNotify('api/vista/video/:key/playlist')
     console.error(e)
     return []
   }
@@ -157,7 +157,7 @@ export async function getVideoUrl(
  */
 export async function getHomeMixData(): Promise<FnReturns.GetHomeMixData | null> {
   try {
-    const { data } = await getax<ApiType.GetIndex>('api/getIndex')
+    const { data } = await getax<ApiType.GetIndex>('api/vista/video/index')
     const listFormat = (list: any[]) =>
       list.slice(0, 10).map((item) => ({
         cover: item.cover,
@@ -195,7 +195,7 @@ export async function getHomeMixData(): Promise<FnReturns.GetHomeMixData | null>
     }
     // return
   } catch (e) {
-    badRequestNotify('api/getIndex')
+    badRequestNotify('api/vista/video/index')
     console.error(e)
     return null
   }
@@ -207,7 +207,7 @@ export async function getHomeMixData(): Promise<FnReturns.GetHomeMixData | null>
  */
 export async function getComicFilterConfig(): Promise<FnReturns.GetComicFilterConfig> {
   try {
-    const { data } = await getax<ApiType.GetConfig>('api/getConfig')
+    const { data } = await getax<ApiType.GetConfig>('api/vista/video/config')
     return getVal(() => data.data.filtersConfig, []).map((item) => ({
       id: item.id,
       name: item.name,
@@ -217,7 +217,7 @@ export async function getComicFilterConfig(): Promise<FnReturns.GetComicFilterCo
       }))
     }))
   } catch {
-    badRequestNotify('api/getConfig')
+    badRequestNotify('api/vista/video/config')
     return []
   }
 }

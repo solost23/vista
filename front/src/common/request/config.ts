@@ -7,4 +7,4 @@ export const timeout = 14000
 /**
  * 接口基准头
  */
-export const BASE_COMIC_URL = getServerIp()
+export const BASE_COMIC_URL = "/api"
