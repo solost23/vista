@@ -3,13 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/spf13/viper"
-	_ "github.com/spf13/viper/remote"
 	"os"
 	"oss_service/configs"
 	"oss_service/internal/server"
 	"oss_service/pkg/helper"
 	"path"
+
+	"github.com/spf13/viper"
+	_ "github.com/spf13/viper/remote"
+	"go.uber.org/zap"
 )
 
 var (
@@ -34,11 +36,7 @@ func main() {
 	}
 	// run
 	// 从consul读取配置
-	serverConfig, err := InitConfigFromConsul()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
-	}
+	serverConfig := InitConfig()
 	sl, err := helper.InitLogger(execDir, WebLogPath, serverConfig.Mode)
 	if err != nil {
 		fmt.Println(err)
@@ -47,49 +45,41 @@ func main() {
 	server.NewServer(serverConfig, sl).Run()
 }
 
-func InitConfig() (serverConfig *configs.ServerConfig, err error) {
-	serverConfig = new(configs.ServerConfig)
-	confPath := path.Join(execDir, WebConfigPath)
-	v := viper.New()
-	v.SetConfigFile(confPath)
-	if err := v.ReadInConfig(); err != nil {
-		return nil, err
-	}
-	if err := v.Unmarshal(serverConfig); err != nil {
-		return nil, err
-	}
-	return serverConfig, nil
-}
-
-func InitConfigFromConsul() (serverConfig *configs.ServerConfig, err error) {
-	serverConfig = new(configs.ServerConfig)
+func InitConfig() *configs.ServerConfig {
 	v := viper.New()
 	// 通过项目配置读取基本信息
 	v.SetConfigFile(path.Join(execDir, WebConfigPath))
-	if err = v.ReadInConfig(); err != nil {
-		return nil, err
+	if err := v.ReadInConfig(); err != nil {
+		zap.S().Panic("read config failed", zap.Error(err))
+		return nil
 	}
-	if err = v.Unmarshal(serverConfig); err != nil {
-		return nil, err
+
+	serverConfig := &configs.ServerConfig{}
+	if err := v.Unmarshal(serverConfig); err != nil {
+		zap.S().Panic("unmarshal config failed", zap.Error(err))
+		return nil
 	}
 
 	// 从配置中心读取配置
-	err = v.AddRemoteProvider(provider,
+	err := v.AddRemoteProvider(provider,
 		fmt.Sprintf("%s:%d", serverConfig.ConsulConfig.Host, serverConfig.ConsulConfig.Port),
 		serverConfig.ConfigPath)
 	if err != nil {
-		return nil, err
+		zap.S().Warn("add remote provider failed")
+		return serverConfig
 	}
 
 	v.SetConfigType("YAML")
 
 	if err = v.ReadRemoteConfig(); err != nil {
-		return nil, err
+		zap.S().Warn("read remote config failed")
+		return serverConfig
 	}
 
 	if err = v.Unmarshal(serverConfig); err != nil {
-		return nil, err
+		zap.S().Panic("unmarshal remote config failed")
+		return serverConfig
 	}
-	return serverConfig, nil
+	return serverConfig
 
 }
