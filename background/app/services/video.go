@@ -12,6 +12,7 @@ import (
 	"vista/pkg/models"
 	"vista/pkg/response"
 	"vista/pkg/utils"
+	"vista/services/servants"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/now"
@@ -650,5 +651,224 @@ func (*VideoService) Filter(c *gin.Context, params *forms.VideoFilterForm) {
 			Current: params.Page,
 		},
 		Records: records,
+	})
+}
+
+func (*VideoService) Playlist(c *gin.Context, videoId uint) {
+	db := global.DB
+	sqlPlaylist, err := models.GWhereAllSelectOrder[models.Playlist](db, "*", "sort ASC", "video_id = ?", videoId)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	records := make([]forms.Playlist, 0, len(sqlPlaylist))
+	for i := 0; i != len(sqlPlaylist); i++ {
+		records = append(records, forms.Playlist{
+			ID:    sqlPlaylist[i].ID,
+			Link:  utils.FulfillImageOSSPrefix(sqlPlaylist[i].Link),
+			Sort:  sqlPlaylist[i].Sort,
+			Title: sqlPlaylist[i].Title,
+		})
+	}
+
+	response.Success(c, records)
+}
+
+func (*VideoService) Config(c *gin.Context) {
+	db := global.DB
+	sqlCategories, err := models.GWhereAllSelectOrder[models.Category](db, "*", "id DESC", "1 = ?", 1)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	records := make([]forms.Category, 0, len(sqlCategories))
+	for i := 0; i != len(sqlCategories); i++ {
+		records = append(records, forms.Category{
+			ID:   sqlCategories[i].ID,
+			Name: sqlCategories[i].Title,
+		})
+	}
+
+	response.Success(c, forms.VideoConfig{
+		FiltersConfig: []forms.FilterConfig{
+			{Name: "全部", ID: 0, Categories: records},
+		},
+	})
+}
+
+func (*VideoService) Index(c *gin.Context) {
+	db := global.DB
+	sqlCategories, err := models.GWhereAllSelect[models.Category](db, "id,title", "title IN (?)", servants.IndexPlate)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	categoryIds := make([]uint, 0, len(sqlCategories))
+	categoryNameMap := make(map[string]uint, len(sqlCategories))
+	for i := 0; i != len(sqlCategories); i++ {
+		categoryIds = append(categoryIds, sqlCategories[i].ID)
+		categoryNameMap[sqlCategories[i].Title] = sqlCategories[i].ID
+	}
+	sqlRelation, err := models.GWhereAllSelect[models.CategoryVideo](db, "category_id,video_id", "category_id IN (?)", categoryIds)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	videoIds := make([]uint, 0, len(sqlRelation))
+	categoryIdMap := make(map[uint][]uint, len(sqlCategories))
+	for i := 0; i != len(sqlRelation); i++ {
+		videoIds = append(videoIds, sqlRelation[i].VideoID)
+		categoryIdMap[sqlRelation[i].CategoryID] = append(categoryIdMap[sqlRelation[i].CategoryID], sqlRelation[i].VideoID)
+	}
+
+	sqlVideos, err := models.GWhereAllSelectOrder[models.Video](db, "*", "created_at DESC", "id IN (?)", videoIds)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	videoIdMap := make(map[uint]models.Video, len(sqlVideos))
+	for i := 0; i != len(sqlVideos); i++ {
+		videoIdMap[sqlVideos[i].ID] = sqlVideos[i]
+	}
+
+	// 收集数据返回
+	banners := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
+	chineseComics := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
+	hots := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
+	japancomic := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
+	latest := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
+	perweek := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
+	theatreComic := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
+
+	if id, exist := categoryNameMap[servants.IndexPlate[0]]; exist {
+		for i := 0; i != len(categoryIdMap[id]); i++ {
+			sqlVideo := videoIdMap[categoryIdMap[id][i]]
+			season := "更新"
+			if sqlVideos[i].Season == models.VideoSeasonFinish {
+				season = "完结"
+			}
+			banners = append(banners, forms.VideoRecord{
+				ID:          sqlVideo.ID,
+				Cover:       utils.FulfillImageOSSPrefix(sqlVideo.Cover),
+				Title:       sqlVideo.Title,
+				Season:      season,
+				Date:        sqlVideo.FirstDate.Format(constants.DateTime),
+				Description: sqlVideo.Introduce,
+			})
+		}
+	}
+	if id, exist := categoryNameMap[servants.IndexPlate[1]]; exist {
+		for i := 0; i != len(categoryIdMap[id]); i++ {
+			sqlVideo := videoIdMap[categoryIdMap[id][i]]
+			season := "更新"
+			if sqlVideos[i].Season == models.VideoSeasonFinish {
+				season = "完结"
+			}
+			chineseComics = append(chineseComics, forms.VideoRecord{
+				ID:          sqlVideo.ID,
+				Cover:       utils.FulfillImageOSSPrefix(sqlVideo.Cover),
+				Title:       sqlVideo.Title,
+				Season:      season,
+				Date:        sqlVideo.FirstDate.Format(constants.DateTime),
+				Description: sqlVideo.Introduce,
+			})
+		}
+	}
+	if id, exist := categoryNameMap[servants.IndexPlate[2]]; exist {
+		for i := 0; i != len(categoryIdMap[id]); i++ {
+			sqlVideo := videoIdMap[categoryIdMap[id][i]]
+			season := "更新"
+			if sqlVideos[i].Season == models.VideoSeasonFinish {
+				season = "完结"
+			}
+			hots = append(hots, forms.VideoRecord{
+				ID:          sqlVideo.ID,
+				Cover:       utils.FulfillImageOSSPrefix(sqlVideo.Cover),
+				Title:       sqlVideo.Title,
+				Season:      season,
+				Date:        sqlVideo.FirstDate.Format(constants.DateTime),
+				Description: sqlVideo.Introduce,
+			})
+		}
+	}
+	if id, exist := categoryNameMap[servants.IndexPlate[3]]; exist {
+		for i := 0; i != len(categoryIdMap[id]); i++ {
+			sqlVideo := videoIdMap[categoryIdMap[id][i]]
+			season := "更新"
+			if sqlVideos[i].Season == models.VideoSeasonFinish {
+				season = "完结"
+			}
+			japancomic = append(japancomic, forms.VideoRecord{
+				ID:          sqlVideo.ID,
+				Cover:       utils.FulfillImageOSSPrefix(sqlVideo.Cover),
+				Title:       sqlVideo.Title,
+				Season:      season,
+				Date:        sqlVideo.FirstDate.Format(constants.DateTime),
+				Description: sqlVideo.Introduce,
+			})
+		}
+	}
+	if id, exist := categoryNameMap[servants.IndexPlate[4]]; exist {
+		for i := 0; i != len(categoryIdMap[id]); i++ {
+			sqlVideo := videoIdMap[categoryIdMap[id][i]]
+			season := "更新"
+			if sqlVideos[i].Season == models.VideoSeasonFinish {
+				season = "完结"
+			}
+			latest = append(latest, forms.VideoRecord{
+				ID:          sqlVideo.ID,
+				Cover:       utils.FulfillImageOSSPrefix(sqlVideo.Cover),
+				Title:       sqlVideo.Title,
+				Season:      season,
+				Date:        sqlVideo.FirstDate.Format(constants.DateTime),
+				Description: sqlVideo.Introduce,
+			})
+		}
+	}
+	if id, exist := categoryNameMap[servants.IndexPlate[5]]; exist {
+		for i := 0; i != len(categoryIdMap[id]); i++ {
+			sqlVideo := videoIdMap[categoryIdMap[id][i]]
+			season := "更新"
+			if sqlVideos[i].Season == models.VideoSeasonFinish {
+				season = "完结"
+			}
+			perweek = append(perweek, forms.VideoRecord{
+				ID:          sqlVideo.ID,
+				Cover:       utils.FulfillImageOSSPrefix(sqlVideo.Cover),
+				Title:       sqlVideo.Title,
+				Season:      season,
+				Date:        sqlVideo.FirstDate.Format(constants.DateTime),
+				Description: sqlVideo.Introduce,
+			})
+		}
+	}
+	if id, exist := categoryNameMap[servants.IndexPlate[6]]; exist {
+		for i := 0; i != len(categoryIdMap[id]); i++ {
+			sqlVideo := videoIdMap[categoryIdMap[id][i]]
+			season := "更新"
+			if sqlVideos[i].Season == models.VideoSeasonFinish {
+				season = "完结"
+			}
+			theatreComic = append(theatreComic, forms.VideoRecord{
+				ID:          sqlVideo.ID,
+				Cover:       utils.FulfillImageOSSPrefix(sqlVideo.Cover),
+				Title:       sqlVideo.Title,
+				Season:      season,
+				Date:        sqlVideo.FirstDate.Format(constants.DateTime),
+				Description: sqlVideo.Introduce,
+			})
+		}
+	}
+
+	response.Success(c, forms.VideoIndex{
+		Banners:       banners,
+		ChineseComics: chineseComics,
+		Hots:          hots,
+		Japancomic:    japancomic,
+		Latest:        latest,
+		Perweek:       perweek,
+		TheatreComic:  theatreComic,
 	})
 }

@@ -108,71 +108,31 @@ type VideoConfig struct {
 }
 
 type FilterConfig struct {
-	Name       string      `json:"name"`
-	ID         uint        `json:"id"`
-	Categories []Categorie `json:"categories"`
+	Name       string     `json:"name"`
+	ID         uint       `json:"id"`
+	Categories []Category `json:"categories"`
 }
 
-type Categorie struct {
+type Category struct {
 	ID   uint   `json:"id"`
 	Name string `json:"name"`
 }
 
 type VideoIndex struct {
-	Banners       []VideoBanner       `json:"banner"`
-	ChineseComics []VideoChineseComic `json:"chineseComic"`
-	Hots          []VideoHot          `json:"hots"`
-	Japancomic    []VideoJapanComic   `json:"japanComic"`
-	Latest        []VideoLatest       `json:"latest"`
-	Perweek       []VideoPerweek      `json:"perweek"`
-	TheatreComic  []VideoTheatreComic `json:"theatreComic"`
+	Banners       []VideoRecord `json:"banner"`
+	ChineseComics []VideoRecord `json:"chineseComic"`
+	Hots          []VideoRecord `json:"hots"`
+	Japancomic    []VideoRecord `json:"japanComic"`
+	Latest        []VideoRecord `json:"latest"`
+	Perweek       []VideoRecord `json:"perweek"`
+	TheatreComic  []VideoRecord `json:"theatreComic"`
 }
 
-type VideoBanner struct {
-	ID    uint   `json:"id"`
-	Title string `json:"title"`
-	Cover string `json:"cover"`
-}
-
-type VideoChineseComic struct {
-	ID     uint   `json:"id"`
-	Title  string `json:"title"`
-	Cover  string `json:"cover"`
-	Season string `json:"season"`
-}
-
-type VideoHot struct {
+type VideoRecord struct {
 	ID          uint   `json:"id"`
 	Title       string `json:"title"`
 	Cover       string `json:"cover"`
 	Season      string `json:"season"`
 	Date        string `json:"date"`
 	Description string `json:"description"`
-}
-
-type VideoJapanComic struct {
-	ID     uint   `json:"id"`
-	Title  string `json:"title"`
-	Cover  string `json:"cover"`
-	Season string `json:"season"`
-}
-
-type VideoLatest struct {
-	ID     uint   `json:"id"`
-	Title  string `json:"title"`
-	Cover  string `json:"cover"`
-	Season string `json:"season"`
-}
-
-type VideoPerweek struct {
-	ID     uint   `json:"id"`
-	Title  string `json:"title"`
-	Season string `json:"season"`
-}
-
-type VideoTheatreComic struct {
-	ID     uint   `json:"id"`
-	Title  string `json:"title"`
-	Cover  string `json:"cover"`
-	Season string `json:"season"`
 }

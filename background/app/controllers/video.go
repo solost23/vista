@@ -74,13 +74,19 @@ func (*VideoController) filter(c *gin.Context) {
 }
 
 func (*VideoController) playlist(c *gin.Context) {
+	UID := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UID); err != nil {
+		response.Error(c, constants.BadRequestCode, err)
+		return
+	}
 
+	videoService.Playlist(c, UID.Id)
 }
 
 func (*VideoController) config(c *gin.Context) {
-
+	videoService.Config(c)
 }
 
 func (*VideoController) index(c *gin.Context) {
-
+	videoService.Index(c)
 }
