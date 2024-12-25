@@ -12,7 +12,8 @@
         <el-button type="primary" round @click="saveThemeColor">保存</el-button>
       </div>
     </div>
-    <div class="setting-box setting-config">
+
+    <!-- <div class="setting-box setting-config">
       <div class="setting-box__title">参数配置</div>
       <el-form
         ref="paramFormComp"
@@ -54,7 +55,8 @@
           >保存</el-button
         >
       </div>
-    </div>
+    </div> -->
+
   </div>
 </template>
 

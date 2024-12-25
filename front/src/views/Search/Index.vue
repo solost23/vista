@@ -48,13 +48,13 @@
           :right-cancle="false"
           @change="searchByFilter(true)"
         />
-        <AwRadio
+        <!-- <AwRadio
           v-model="filter.letter"
           label="字母"
           :options="SEARCH_FILTER.LETTER"
           :right-cancle="false"
           @change="searchByFilter(true)"
-        />
+        /> -->
       </article>
     </transition>
     <main ref="searchMainEl" class="search-main">

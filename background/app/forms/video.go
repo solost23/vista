@@ -98,8 +98,8 @@ type VideoDetail struct {
 
 type Playlist struct {
 	ID    uint     `json:"id"`
-	Title string   `json:"key"`
-	Link  []string `json:"value"`
+	Title string   `json:"title"`
+	Link  []string `json:"link"`
 	Sort  int      `json:"sort"`
 }
 
@@ -119,13 +119,13 @@ type Category struct {
 }
 
 type VideoIndex struct {
-	Banners       []VideoRecord `json:"banner"`
-	ChineseComics []VideoRecord `json:"chineseComic"`
-	Hots          []VideoRecord `json:"hots"`
-	Japancomic    []VideoRecord `json:"japanComic"`
-	Latest        []VideoRecord `json:"latest"`
-	Perweek       []VideoRecord `json:"perweek"`
-	TheatreComic  []VideoRecord `json:"theatreComic"`
+	Banners       []VideoRecord            `json:"banner"`
+	ChineseComics []VideoRecord            `json:"chineseComic"`
+	Hots          map[string][]VideoRecord `json:"hots"`
+	Japancomic    []VideoRecord            `json:"japanComic"`
+	Latest        []VideoRecord            `json:"latest"`
+	Perweek       map[int][]VideoRecord    `json:"perweek"`
+	TheatreComic  []VideoRecord            `json:"theatreComic"`
 }
 
 type VideoRecord struct {

@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"math/rand"
 	"mime/multipart"
 	"strconv"
 	"strings"
@@ -548,7 +549,7 @@ func (*VideoService) Detail(c *gin.Context, videoId uint) {
 	}
 
 	playlistMap := map[string][]forms.Playlist{}
-	playlistMap["plyalist"] = playlist
+	playlistMap["0"] = playlist
 	response.Success(c, forms.VideoDetail{
 		Actors:     strings.Split(sqlVideo.Actors, ","),
 		Categories: categories,
@@ -655,17 +656,22 @@ func (*VideoService) Playlist(c *gin.Context, videoId uint) {
 		return
 	}
 
-	records := make([]forms.Playlist, 0, len(sqlPlaylist))
+	// records := make([]forms.Playlist, 0, len(sqlPlaylist))
+	// for i := 0; i != len(sqlPlaylist); i++ {
+	// 	records = append(records, forms.Playlist{
+	// 		ID:    sqlPlaylist[i].ID,
+	// 		Link:  []string{utils.FulfillImageOSSPrefix(sqlPlaylist[i].Link)},
+	// 		Sort:  sqlPlaylist[i].Sort,
+	// 		Title: sqlPlaylist[i].Title,
+	// 	})
+	// }
+
+	records := make([]string, 0, len(sqlPlaylist))
 	for i := 0; i != len(sqlPlaylist); i++ {
-		records = append(records, forms.Playlist{
-			ID:    sqlPlaylist[i].ID,
-			Link:  []string{utils.FulfillImageOSSPrefix(sqlPlaylist[i].Link)},
-			Sort:  sqlPlaylist[i].Sort,
-			Title: sqlPlaylist[i].Title,
-		})
+		records = append(records, utils.FulfillImageOSSPrefix(sqlPlaylist[i].Link))
 	}
 
-	response.Success(c, records)
+	response.Success(c, map[int][]string{0: records})
 }
 
 func (*VideoService) Config(c *gin.Context) {
@@ -732,7 +738,7 @@ func (*VideoService) Index(c *gin.Context) {
 	hots := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
 	japancomic := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
 	latest := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
-	perweek := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
+	perweek := make(map[int][]forms.VideoRecord, len(sqlVideos)/7+1)
 	theatreComic := make([]forms.VideoRecord, 0, len(sqlVideos)/7+1)
 
 	if id, exist := categoryNameMap[servants.IndexPlate[0]]; exist {
@@ -827,7 +833,12 @@ func (*VideoService) Index(c *gin.Context) {
 			if sqlVideos[i].Season == models.VideoSeasonFinish {
 				season = "完结"
 			}
-			perweek = append(perweek, forms.VideoRecord{
+
+			// 先随机模拟一个更新日期
+			rand.Seed(time.Now().UnixNano())
+			key := rand.Intn(7)
+
+			perweek[key] = append(perweek[key], forms.VideoRecord{
 				ID:          sqlVideo.ID,
 				Cover:       utils.FulfillImageOSSPrefix(sqlVideo.Cover),
 				Title:       sqlVideo.Title,
@@ -858,7 +869,7 @@ func (*VideoService) Index(c *gin.Context) {
 	response.Success(c, forms.VideoIndex{
 		Banners:       banners,
 		ChineseComics: chineseComics,
-		Hots:          hots,
+		Hots:          map[string][]forms.VideoRecord{"results": hots},
 		Japancomic:    japancomic,
 		Latest:        latest,
 		Perweek:       perweek,

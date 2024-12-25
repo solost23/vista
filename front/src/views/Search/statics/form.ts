@@ -7,6 +7,11 @@ function nameToOption(names: string[]): Option[] {
   }))
 }
 
+function getCurrentYear(): number {
+  const now = new Date();
+  return now.getFullYear();
+}
+
 export const SEARCH_FILTER: {
   [prop: string]: Option[]
 } = {
@@ -18,8 +23,8 @@ export const SEARCH_FILTER: {
     ...Array(21)
       .fill(0)
       .map((item, index) => ({
-        name: 2021 - index,
-        value: 2021 - index
+        name: getCurrentYear() - index,
+        value: getCurrentYear() - index
       }))
   ],
   // 97
