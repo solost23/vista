@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
@@ -86,6 +87,48 @@ func main() {
 			}
 			if err = models.GBatchInsert[models.Category](db, sqlCategories); err != nil {
 				zap.S().Panic(err)
+			}
+
+			// 初始化三个视频信息，方便调试，后面删除
+			{
+				sqlVideos := []models.Video{
+					{CreatorBase: models.CreatorBase{CreatorId: userId}, Title: "蜡笔小新", Introduce: "蜡笔小新", Language: models.VideoLanguageJapan, Master: "臼井仪人", FirstDate: time.Now(), Ranking: 1, Score: 90.1, Region: models.VideoRegionJapan, Season: models.VideoSeasonUpdate, Actors: "小红,小明"},
+					{CreatorBase: models.CreatorBase{CreatorId: userId}, Title: "龙猫", Introduce: "龙猫", Language: models.VideoLanguageJapan, Master: "宫崎骏", FirstDate: time.Now(), Ranking: 2, Score: 90.2, Region: models.VideoRegionJapan, Season: models.VideoSeasonFinish, Actors: "小明,小红"},
+					{CreatorBase: models.CreatorBase{CreatorId: userId}, Title: "天空之城", Introduce: "天空之城", Language: models.VideoLanguageJapan, Master: "宫崎骏", FirstDate: time.Now(), Ranking: 3, Score: 90.0, Region: models.VideoRegionJapan, Season: models.VideoSeasonFinish, Actors: "小明,小李"},
+				}
+				if err = models.GBatchInsert[models.Video](db, sqlVideos); err != nil {
+					zap.S().Panic(err)
+				}
+				// 插入关系表
+				sqlCategoryVideos := make([]models.CategoryVideo, 0, 3*len(sqlVideos))
+				rand.Seed(time.Now().UnixNano())
+				for i := 0; i != len(sqlVideos); i++ {
+					for j := 0; j != 3; j++ {
+						sqlCategoryVideos = append(sqlCategoryVideos, models.CategoryVideo{
+							CreatorBase: models.CreatorBase{CreatorId: userId},
+							VideoID:     sqlVideos[i].ID,
+							CategoryID:  sqlCategories[rand.Intn(len(sqlCategories))].ID,
+						})
+					}
+				}
+				if err = models.GBatchInsert[models.CategoryVideo](db, sqlCategoryVideos); err != nil {
+					zap.S().Panic(err)
+				}
+				// 创建播放列表
+				sqlPlaylist := make([]models.Playlist, 0, 3*len(sqlVideos))
+				for i := 0; i != len(sqlVideos); i++ {
+					for j := 0; j != 3; j++ {
+						sqlPlaylist = append(sqlPlaylist, models.Playlist{
+							CreatorBase: models.CreatorBase{CreatorId: userId},
+							VideoID:     sqlVideos[i].ID,
+							Title:       fmt.Sprintf("第%d集", j+1),
+							Sort:        j + 1,
+						})
+					}
+				}
+				if err = models.GBatchInsert[models.Playlist](db, sqlPlaylist); err != nil {
+					zap.S().Panic(err)
+				}
 			}
 		}
 	}
