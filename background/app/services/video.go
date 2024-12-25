@@ -852,7 +852,7 @@ func (*VideoService) Index(c *gin.Context) {
 		for i := 0; i != len(categoryIdMap[id]); i++ {
 			sqlVideo := videoIdMap[categoryIdMap[id][i]]
 			season := "更新"
-			if sqlVideos[i].Season == models.VideoSeasonFinish {
+			if sqlVideo.Season == models.VideoSeasonFinish {
 				season = "完结"
 			}
 			theatreComic = append(theatreComic, forms.VideoRecord{
