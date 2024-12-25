@@ -36,14 +36,14 @@ createRouteSCM()
 router.beforeEach((to, from, next) => {
   getRouteSCMInstance().addCache(from.path, from.meta)
 
-  if (to.name !== 'Setting' && !getServerIp()) {
-    ElNotification({
-      type: 'error',
-      title: '配置',
-      message: '请先配置服务器地址'
-    })
-    next({ name: 'Setting' })
-  }
+  // if (to.name !== 'Setting' && !getServerIp()) {
+  //   ElNotification({
+  //     type: 'error',
+  //     title: '配置',
+  //     message: '请先配置服务器地址'
+  //   })
+  //   next({ name: 'Setting' })
+  // }
   next()
 })
 router.afterEach((to) => {
