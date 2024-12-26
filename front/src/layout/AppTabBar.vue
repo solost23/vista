@@ -19,7 +19,7 @@
       <AppTabBarComiclist v-model:visible="comiclistVisible" />
     </div>
     <div class="avatar">
-      <BaseImg src="https://api.adicw.cn/uploads/UserAvatar/default.jpg" />
+      <BaseImg src="/android-chrome-192x192.png" />
     </div>
   </div>
 </template>

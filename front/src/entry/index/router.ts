@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import { getServerIp } from '@/stores/systemConfig.store'
-import { ElNotification } from 'element-plus'
+// import { getServerIp } from '@/stores/systemConfig.store'
+// import { ElNotification } from 'element-plus'
 import {
   getRouteSCMInstance,
   createRouteSCM
