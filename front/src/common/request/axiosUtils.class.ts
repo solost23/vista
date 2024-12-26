@@ -37,9 +37,9 @@ export default class AxiosUtils {
           ElNotification({
             type: 'error',
             title: '资源获取错误',
-            message: '请求源存在问题，请检查或修改 服务器地址'
+            message: '请求源存在问题'
           })
-          router.push({ name: 'Setting' })
+          // router.push({ name: 'Setting' })
         }
         return Promise.reject()
       }
