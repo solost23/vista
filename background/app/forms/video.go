@@ -120,12 +120,12 @@ type Category struct {
 
 type VideoIndex struct {
 	Banners       []VideoRecord            `json:"banner"`
-	ChineseComics []VideoRecord            `json:"chineseComic"`
+	ChineseComics []VideoRecord            `json:"chinese_comic"`
 	Hots          map[string][]VideoRecord `json:"hots"`
-	Japancomic    []VideoRecord            `json:"japanComic"`
+	Japancomic    []VideoRecord            `json:"japancomic"`
 	Latest        []VideoRecord            `json:"latest"`
 	Perweek       map[int][]VideoRecord    `json:"perweek"`
-	TheatreComic  []VideoRecord            `json:"theatreComic"`
+	TheatreComic  []VideoRecord            `json:"theatre_comic"`
 }
 
 type VideoRecord struct {
