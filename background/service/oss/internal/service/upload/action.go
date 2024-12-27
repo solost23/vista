@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/solost23/protopb/gen/go/protos/oss"
 	"net/url"
 	"oss_service/internal/minio_storage"
 	"oss_service/internal/models"
 	"oss_service/internal/service/base"
 	"time"
+
+	"github.com/solost23/protopb/gen/go/protos/oss"
 )
 
 type Action struct {
@@ -23,10 +24,6 @@ func NewActionWithCtx(ctx context.Context) *Action {
 }
 
 func (a *Action) Deal(ctx context.Context, request *oss.UploadRequest) (reply *oss.UploadResponse, err error) {
-	err = minio_storage.CreateBucket(ctx, a.GetMinioClient(), request.GetFolder())
-	if err != nil {
-		return nil, err
-	}
 	reader := bytes.NewReader(request.GetData())
 	err = minio_storage.StreamUpload(ctx, a.GetMinioClient(), request.GetFolder(), request.GetKey(), reader, reader.Size(), fmt.Sprintf("Application/%s", request.GetUploadType()))
 	if err != nil {
