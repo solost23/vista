@@ -132,9 +132,9 @@ func main() {
 			}
 		}
 	}
-
-	// HTTP init
+	// HTTP init && 设置文件上传大小限制
 	app := gin.New()
+	app.MaxMultipartMemory = 1024 << 20
 	routers.Setup(app)
 
 	server := &http.Server{
