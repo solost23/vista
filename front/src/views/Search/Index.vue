@@ -142,7 +142,7 @@ function filterModule(init: () => void) {
   })
   const pager = reactive({
     currnet: 1,
-    size: 24,
+    size: 20,
     total: 0
   })
   const filterVisible = ref(true)
