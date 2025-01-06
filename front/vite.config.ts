@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import viteCompression from 'vite-plugin-compression'
-import viteImportToCdn from 'vite-plugin-cdn-import'
+// import viteImportToCdn from 'vite-plugin-cdn-import'
 import ElementPlus from 'unplugin-element-plus/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 
@@ -19,21 +19,21 @@ export default defineConfig({
       algorithm: 'gzip',
       ext: '.gz'
     }),
-    // 生成环境，依赖抽离为cdn
-    viteImportToCdn({
-      modules: [
-        {
-          name: 'video.js',
-          var: 'videojs',
-          path: 'https://cdn.bootcdn.net/ajax/libs/video.js/7.21.0/video.min.js'
-        },
-        {
-          name: 'moment',
-          var: 'moment',
-          path: 'https://cdn.bootcdn.net/ajax/libs/moment.js/2.29.4/moment.min.js'
-        }
-      ]
-    }),
+    // // 生成环境，依赖抽离为cdn, 由于开启 vpn后访问cdn会很慢所以选择集成到代码
+    // viteImportToCdn({
+    //   modules: [
+    //     {
+    //       name: 'video.js',
+    //       var: 'videojs',
+    //       path: 'https://cdn.bootcdn.net/ajax/libs/video.js/7.21.0/video.min.js'
+    //     },
+    //     {
+    //       name: 'moment',
+    //       var: 'moment',
+    //       path: 'https://cdn.bootcdn.net/ajax/libs/moment.js/2.29.4/moment.min.js'
+    //     }
+    //   ]
+    // }),
     // 打包结果分析（会在打包成功后，根目录生成stats.html文件）
     visualizer()
   ],
