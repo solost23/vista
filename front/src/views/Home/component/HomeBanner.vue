@@ -42,7 +42,8 @@
                     @click="toComicMain(carousel.current.id)"
                     >前往播放<Icon name="play"
                   /></el-button>
-                  <el-button round plain>详情</el-button>
+                  <!-- 暂无详情页，先注销 -->
+                  <!-- <el-button round plain>详情</el-button> -->
                 </div>
               </div>
             </transition>
