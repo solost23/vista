@@ -49,6 +49,8 @@
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useRouter } from "vue-router";
+
+  import * as Api from '@/api'
   // import { loginService } from "@/api/user";
   // import { useTokenStore } from "@/stores/token";
   // import { useUserInfoStore } from "@/stores/user";
@@ -57,24 +59,23 @@
     username: "",
     password: "",
   });
-  const loginFormRef = ref({
-    username: "",
-    password: "",
-  });
+  // const loginFormRef = ref({
+  //   username: "",
+  //   password: "",
+  // });
   
-  const rules = {
-    email: [
-      { required: true, message: "请输入用户名", trigger: "blur" },
-      { type: "email", message: "邮箱格式不正确", trigger: ["blur", "change"] },
-    ],
-    password: [
-      {
-        required: true,
-        message: "请输入密码",
-        trigger: "blur",
-      },
-    ],
-  };
+  // const rules = {
+  //   username: [
+  //     { required: true, message: "请输入用户名", trigger: "blur" },
+  //   ],
+  //   password: [
+  //     {
+  //       required: true,
+  //       message: "请输入密码",
+  //       trigger: "blur",
+  //     },
+  //   ],
+  // };
   
   // const router = useRouter();
   // const userStore = useUserInfoStore();
@@ -93,7 +94,20 @@
   // };
 
   // 接口交互
-  
+  const login = async () => {
+    const { data } = await Api.Login({
+      username: loginForm.username,
+      password: loginForm.password,
+      device: 'web', 
+    })
+    if (data) {
+      console.log(data)
+      // 保存token
+    }
+
+    alart('登陆成功')
+  }
+
   
   // // const changeUrl = (url) => {
   // //   router.replace(url);
