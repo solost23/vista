@@ -3,6 +3,7 @@ import { getVal } from '@sorarain/utils'
 import * as FnReturns from './type'
 import * as ApiType from './api.type'
 import { newError, badRequestNotify } from './utils'
+import { ElNotification } from 'element-plus'
 
 export * from './type'
 export * from './pixiv'
@@ -233,6 +234,14 @@ export async function login(params: {
 }): Promise<FnReturns.Login | null> {
   try {
     const { data } = await postax<ApiType.Login>('/login', params)
+    if (data.code != 0 && data.success == false) {
+      ElNotification({
+        title: '登陆失败',
+        message: data.message,
+        type: 'error'
+      })
+      return null
+    }
     return {
       id: data.data.ID, 
       nickname: data.data.nickname, 
@@ -253,11 +262,20 @@ export async function register(params: {
   username: string 
   password: string 
   role: number 
-}): Promise<null> {
+}): Promise<string | null> {
   try {
-    await postax<ApiType.Register>('/register', params)
+    const { data } = await postax<ApiType.Register>('/register', params)
+    if (data.code != 0 && data.success == false) {
+      ElNotification({
+        title: '注册失败',
+        message: data.message,
+        type: 'error'
+      })
+      return null
+    }
+    return 'success'
   } catch {
     badRequestNotify('/register')
   }
-  return null
+  return 'success'
 }

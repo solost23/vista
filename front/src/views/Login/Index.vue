@@ -7,7 +7,6 @@
       <el-form
         :model="loginForm"
         ref="loginFormRef"
-        :rules="rules"
         label-width="100px"
         style="transform: translate(-30px)"
       >
@@ -49,6 +48,7 @@
 <script lang="ts" setup>
   import { ref } from "vue";
   import { useRouter } from "vue-router";
+  import { ElNotification } from "element-plus";
 
   import * as Api from '@/api'
   // import { loginService } from "@/api/user";
@@ -77,7 +77,7 @@
   //   ],
   // };
   
-  // const router = useRouter();
+  const router = useRouter();
   // const userStore = useUserInfoStore();
   // const tokenStore = useTokenStore();
   
@@ -95,25 +95,25 @@
 
   // 接口交互
   const login = async () => {
-    try {
-      const { data } = await Api.Login({
-        username: loginForm.username,
-        password: loginForm.password,
-        device: 'web', 
+    const data = await Api.login({
+      username: loginForm.value.username,
+      password: loginForm.value.password,
+      device: 'web', 
+    })
+    if (data) {
+      // 保存 token
+      router.push("/");
+      ElNotification({
+        title: '登录成功',
+        message: '欢迎回来',
+        type: 'success',
       })
-
-      console.log(data)
-    } catch {
-      console.log(data)
-      alert('登陆失败')
-    }
-
+    } 
   };
 
-  
-  // // const changeUrl = (url) => {
-  // //   router.replace(url);
-  // // };
+  const changeUrl = (url: string) => {
+    router.replace(url);
+  };
   
   const options = {
     fpsLimit: 60,
