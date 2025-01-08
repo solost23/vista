@@ -1,6 +1,6 @@
 version: "1.0.1"
 mode: "debug"
-addr: ":8081"
+addr: ":15000"
 time_location: "Asia/Shanghai"
 prometheus_enable: false
 config_path: api/vista

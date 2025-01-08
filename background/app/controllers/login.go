@@ -23,7 +23,8 @@ func LoginRegister(router *gin.RouterGroup) {
 	// 登陆
 	router.POST("login", controller.Login)
 	// 登出
-	router.Use(middlewares.JWTAuth()).DELETE("logout", controller.Logout)
+	apiRouter := router.Group("")
+	apiRouter.Use(middlewares.JWTAuth()).DELETE("logout", controller.Logout)
 }
 
 func (controller *LoginController) upload(c *gin.Context) {
