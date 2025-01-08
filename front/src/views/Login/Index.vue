@@ -95,18 +95,20 @@
 
   // 接口交互
   const login = async () => {
-    const { data } = await Api.Login({
-      username: loginForm.username,
-      password: loginForm.password,
-      device: 'web', 
-    })
-    if (data) {
+    try {
+      const { data } = await Api.Login({
+        username: loginForm.username,
+        password: loginForm.password,
+        device: 'web', 
+      })
+
       console.log(data)
-      // 保存token
+    } catch {
+      console.log(data)
+      alert('登陆失败')
     }
 
-    alart('登陆成功')
-  }
+  };
 
   
   // // const changeUrl = (url) => {
