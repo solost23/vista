@@ -21,7 +21,7 @@ type User struct {
 	Introduce     string    `json:"introduce" gorm:"column:introduce;type:varchar(300);comment: 用户介绍"`
 	FansCount     int64     `json:"fansCount" gorm:"column:fans_count;type:bigint unsigned;comment: 用户粉丝数;default:0"`
 	CommentCount  int64     `json:"commentCount" gorm:"column:comment_count;type:bigint unsigned;comment: 用户评论数;default:0"`
-	LastLoginTime time.Time `json:"lastLoginTime" gorm:"column:last_login_time;type:datetime;comment: 用户上次登录时间"`
+	LastLoginTime time.Time `json:"lastLoginTime" gorm:"column:last_login_time;type:datetime;default:null;comment: 用户上次登录时间"`
 }
 
 func (u *User) TableName() string {

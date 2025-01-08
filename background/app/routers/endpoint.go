@@ -19,6 +19,8 @@ func SetRouters(router *gin.Engine) {
 	})
 
 	apiGroup := router.Group("api/vista")
+	// 登陆注册相关
+	controllers.LoginRegister(apiGroup)
 
 	// 视频相关
 	controllers.VideoRegister(apiGroup.Group("video"))
@@ -31,9 +33,9 @@ func SetRouters(router *gin.Engine) {
 }
 
 func initNoAuthRouter(group *gin.RouterGroup) {
-	group.POST("register", register)
-	group.POST("register/avatar", uploadAvatar)
-	group.POST("login", login)
+	// group.POST("register", register)
+	// group.POST("register/avatar", uploadAvatar)
+	// group.POST("login", login)
 
 	// 搜索用户 - 全局搜索
 	group.GET("users/search", searchUser)
@@ -59,7 +61,7 @@ func initAuthUserRouter(group *gin.RouterGroup) {
 	user := group.Group("users")
 	{
 		// 注销用户
-		user.POST("logout", logout)
+		// user.POST("logout", logout)
 		// 显示单个用户信息
 		user.GET(":id", userDetail)
 		// 删除单个用户信息(注销，此时用户下的分类、视频和评论都需要删除:定时任务),这里只需要打标记即可

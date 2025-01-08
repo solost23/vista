@@ -15,6 +15,7 @@ import (
 	"vista/pkg/constants"
 	"vista/pkg/middlewares"
 	"vista/pkg/models"
+	"vista/pkg/response"
 	"vista/pkg/utils"
 
 	"github.com/dgrijalva/jwt-go"
@@ -39,10 +40,10 @@ func (s *Service) Register(c *gin.Context, params *forms.RegisterForm) (err erro
 	user := &models.User{
 		Username:     *params.Username,
 		Password:     utils.NewMd5(*params.Password, global.ServerConfig.Md5Config.Secret),
-		Nickname:     *params.Nickname,
+		Nickname:     params.Nickname,
 		Role:         *params.Role,
-		Avatar:       utils.TrimDomainPrefix(*params.Avatar),
-		Introduce:    *params.Introduce,
+		Avatar:       utils.TrimDomainPrefix(params.Avatar),
+		Introduce:    params.Introduce,
 		FansCount:    0,
 		CommentCount: 0,
 	}
@@ -398,4 +399,129 @@ func (s *Service) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.L
 	}
 
 	return result, nil
+}
+
+type LoginService struct{}
+
+func (*LoginService) Register(c *gin.Context, params *forms.RegisterForm) {
+	db := global.DB
+
+	query := []string{"username = ?"}
+	args := []interface{}{params.Username}
+	sqlUser, err := (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	if sqlUser != nil && sqlUser.ID > 0 {
+		response.Error(c, constants.BadRequestCode, errors.New(fmt.Sprintf("用户:%s已存在", *params.Username)))
+		return
+	}
+
+	user := &models.User{
+		Username:     *params.Username,
+		Password:     utils.NewMd5(*params.Password, global.ServerConfig.Md5Config.Secret),
+		Nickname:     params.Nickname,
+		Role:         *params.Role,
+		Avatar:       utils.TrimDomainPrefix(params.Avatar),
+		Introduce:    params.Introduce,
+		FansCount:    0,
+		CommentCount: 0,
+	}
+	if err := models.GInsert(db, user); err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	response.Success(c, "success")
+}
+
+func (*LoginService) Login(c *gin.Context, params *forms.LoginForm) {
+	db := global.DB
+
+	sqlUser, err := models.GWhereFirstSelect[models.User](db, "*", "username = ?", *params.Username)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	if sqlUser == nil {
+		response.Error(c, constants.BadRequestCode, errors.New(fmt.Sprintf("用户%s不存在", *params.Username)))
+		return
+	}
+	// if *params.Username != sqlUser.Username || utils.NewMd5(*params.Password, global.ServerConfig.Md5Config.Secret) != sqlUser.Password {
+	// 	response.Error(c, constants.BadRequestCode, errors.New("用户名或密码错误"))
+	// 	return
+	// }
+	// 区分两种设备 分别是 web 和 mobile
+	var redisPrefix string
+	if *params.Device == "web" {
+		redisPrefix = constants.WebRedisPrefix
+	} else {
+		redisPrefix = constants.MobileRedisPrefix
+	}
+
+	j := middlewares.NewJWT()
+	claims := middlewares.CustomClaims{
+		UserId: sqlUser.ID,
+		Device: redisPrefix,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix(),
+			ExpiresAt: time.Now().Unix() + int64(global.ServerConfig.JWTConfig.Duration),
+			Issuer:    "vista",
+		},
+	}
+	token, err := j.CreateToken(claims)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	userJson, err := json.Marshal(sqlUser)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	rdb, err := cache.RedisConnFactory(0)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	key := redisPrefix + strconv.Itoa(int(sqlUser.ID))
+	oldToken, _ := rdb.Get(c, key).Result()
+
+	rdb.Del(c, constants.RedisPrefix+oldToken)
+	rdb.Set(c, key, token, time.Duration(global.ServerConfig.JWTConfig.Duration)*time.Second)
+	rdb.Set(c, constants.RedisPrefix+token, userJson, time.Duration(global.ServerConfig.JWTConfig.Duration)*time.Second)
+
+	err = models.GUpdateColumn(db, &models.User{}, "last_login_time", time.Now(), "id = ?", sqlUser.ID)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	sqlUser.Avatar = utils.FulfillImageOSSPrefix(sqlUser.Avatar)
+
+	response.Success(c, forms.LoginResponse{
+		User:  sqlUser,
+		Token: &token,
+	})
+}
+
+func (*LoginService) Logout(c *gin.Context) {
+	rdb, err := cache.RedisConnFactory(0)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	key := c.GetString("device") + strconv.Itoa(c.GetInt("userId"))
+	token, err := rdb.Get(c, key).Result()
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	rdb.Del(c, constants.RedisPrefix+token)
+
+	response.Success(c, "success")
 }
