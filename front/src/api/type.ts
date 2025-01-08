@@ -189,3 +189,10 @@ export interface VilipixerInfo {
   name: string
   desc: string
 }
+
+export type Login = {
+  id: number 
+  nickname: string 
+  avatar: string    
+  token: string 
+}

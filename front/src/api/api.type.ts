@@ -3,6 +3,8 @@ interface ApiFormat<T> {
   code: number
   /** 状态文字 */
   message: string
+  /** 成功与否 */
+  success: boolean
   /** 数据 */
   data: T
 }
@@ -256,3 +258,19 @@ export interface VilipixIllust {
   /** tags */
   tags: string[]
 }
+
+export type Login = ApiFormat<{
+  ID: number 
+  username: string 
+  nickname: string 
+  role: number
+  avatar: string 
+  introduce: string 
+  fansCount: number 
+  commentCount: number 
+  lastLoginTime: string
+  isFirstLogin: number 
+  token: string  
+}>
+
+export type Register = ApiFormat<string> 

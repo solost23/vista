@@ -21,7 +21,9 @@ export default defineComponent({
       'user',
       'pixiv',
       'setting',
-      'comicmain'
+      'comicmain', 
+      'login', 
+      'register', 
     ]
     const transition = ref('')
 

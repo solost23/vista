@@ -1,4 +1,4 @@
-import { getax } from '@/common/request/index'
+import { getax, postax } from '@/common/request/index'
 import { getVal } from '@sorarain/utils'
 import * as FnReturns from './type'
 import * as ApiType from './api.type'
@@ -220,4 +220,44 @@ export async function getComicFilterConfig(): Promise<FnReturns.GetComicFilterCo
     badRequestNotify('/video/config')
     return []
   }
+}
+
+/**
+ * 登陆
+ * @returns 
+ */
+export async function login(params: {
+  username: string 
+  password: string 
+  device: string 
+}): Promise<FnReturns.Login | null> {
+  try {
+    const { data } = await postax<ApiType.Login>('/login', params)
+    return {
+      id: data.data.ID, 
+      nickname: data.data.nickname, 
+      avatar: data.data.avatar, 
+      token: data.data.token, 
+    }
+  } catch {
+    badRequestNotify('/login')
+    return null
+  }
+}
+
+/**
+ * 注册
+ * @returns 
+ */
+export async function register(params: {
+  username: string 
+  password: string 
+  role: number 
+}): Promise<null> {
+  try {
+    await postax<ApiType.Register>('/register', params)
+  } catch {
+    badRequestNotify('/register')
+  }
+  return null
 }
