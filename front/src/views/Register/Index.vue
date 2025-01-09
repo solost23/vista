@@ -7,7 +7,6 @@
         <el-form
           aria-autocomplete="off"
           :model="registerForm"
-          ref="registerFormRef"
           :rules="rules"
           label-width="100px"
           style="transform: translate(-30px)"
@@ -105,11 +104,11 @@
   //   }
   // };
    
-  const registerForm = ref({
-    username: "", 
-    password: "",
-    confirmPassword: "",
-  });
+  // const registerForm = ref({
+  //   username: "", 
+  //   password: "",
+  //   confirmPassword: "",
+  // });
    
   // const registerFormRef = ref({
   //   email: "",
@@ -118,30 +117,80 @@
   //   code: "",
   // });
    
-  const rules = {
-    // email: [
-    //   { required: true, message: "请输入邮箱", trigger: "blur" },
-    //   { type: "email", message: "邮箱格式不正确", trigger: ["blur", "change"] },
-    // ],
-    username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-    password: [{ required: true, message: "请输入密码", trigger: "blur" }],
-    confirmPassword: [
-      { required: true, message: "请确认密码", trigger: "blur" },
-      // {
-      //   validator: (rule, value, callback) => {
-      //     if (value == "") {
-      //       callback(new Error("请再次输入密码"));
-      //     } else if (value !== registerForm.value.password) {
-      //       callback(new Error("两次密码不一致"));
-      //     } else {
-      //       callback();
-      //     }
-      //   },
-      //   trigger: "blur",
-      // },
-    ],
-    // code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
-  };
+  // const rules: validationRules = {
+  //   // email: [
+  //   //   { required: true, message: "请输入邮箱", trigger: "blur" },
+  //   //   { type: "email", message: "邮箱格式不正确", trigger: ["blur", "change"] },
+  //   // ],
+  //   username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  //   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+  //   confirmPassword: [
+  //     { required: true, message: "请确认密码", trigger: "blur" },
+  //     {
+  //       validator: (rule: any, value: string, callback: (error?: Error)) => {
+  //         if (value == "") {
+  //           callback(new Error("请再次输入密码"));
+  //         } else if (value !== registerForm.value.password) {
+  //           callback(new Error("两次密码不一致"));
+  //         } else {
+  //           callback();
+  //         }
+  //       },
+  //       trigger: "blur",
+  //     },
+  //   ],
+  //   // code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+  // };
+
+  // 定义验证规则的类型
+  interface ValidationRule {
+    required?: boolean;
+    message: string;
+    trigger: string | string[];
+    validator?: (rule: any, value: any, callback: (error?: Error) => void) => void;
+  }
+
+  // 定义整个验证规则对象的类型
+  interface ValidationRules {
+    [key: string]: ValidationRule[];
+  }
+
+  // 假设的表单状态
+  interface registerForm {
+    username: string;
+    password: string;
+    confirmPassword: string;
+    // 可以添加其他字段
+  }
+
+  const registerForm = ref<registerForm>({
+    username: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  // 定义验证规则，注意这里不直接引用 formState，而是在验证器内部通过闭包访问
+  const rules: ValidationRules = {
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  confirmPassword: [
+    { required: true, message: '请确认密码', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== registerForm.password) {
+          callback(new Error('两次密码不一致'));
+        } else {
+          callback();
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
+  // 可以添加其他字段的规则
+};
+
    
   const router = useRouter();
    

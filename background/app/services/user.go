@@ -448,10 +448,10 @@ func (*LoginService) Login(c *gin.Context, params *forms.LoginForm) {
 		response.Error(c, constants.BadRequestCode, errors.New(fmt.Sprintf("用户%s不存在", *params.Username)))
 		return
 	}
-	// if *params.Username != sqlUser.Username || utils.NewMd5(*params.Password, global.ServerConfig.Md5Config.Secret) != sqlUser.Password {
-	// 	response.Error(c, constants.BadRequestCode, errors.New("用户名或密码错误"))
-	// 	return
-	// }
+	if *params.Username != sqlUser.Username || utils.NewMd5(*params.Password, global.ServerConfig.Md5Config.Secret) != sqlUser.Password {
+		response.Error(c, constants.BadRequestCode, errors.New("用户名或密码错误"))
+		return
+	}
 	// 区分两种设备 分别是 web 和 mobile
 	var redisPrefix string
 	if *params.Device == "web" {

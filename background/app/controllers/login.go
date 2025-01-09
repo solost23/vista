@@ -54,6 +54,9 @@ func (controller *LoginController) register(c *gin.Context) {
 	if params.Nickname == "" {
 		params.Nickname = *params.Username
 	}
+	if params.Avatar == "" {
+		params.Avatar = "/vista.static.avatar/982eb337348ff7a3e2ac0c622d5ad939.png"
+	}
 
 	loginService.Register(c, params)
 }

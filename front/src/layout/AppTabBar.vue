@@ -19,7 +19,8 @@
       <AppTabBarComiclist v-model:visible="comiclistVisible" />
     </div>
     <div class="avatar">
-      <BaseImg src="/android-chrome-192x192.png" />
+      <!-- <BaseImg src="/android-chrome-192x192.png" /> -->
+      <BaseImg :src="login ? avatar : '/android-chrome-192x192.png'" />
     </div>
   </div>
 </template>
@@ -31,6 +32,7 @@ import AppTabBarComiclist from './AppTabBarComiclist.vue'
 import { getThemeInstance } from '@/theme/theme.class'
 import { DF_SYSTEM_COLOR, THEME_DARK, THEME_PINK } from '@/theme/static'
 import { debounce } from '@sorarain/utils'
+import { LoginStore } from '@/stores/login.store'
 
 function daytimeModule() {
   const daytimeType = ref(true)
@@ -50,6 +52,17 @@ function daytimeModule() {
   }
 }
 
+function loginModule() {
+  const loginStore = LoginStore();
+  loginStore.init();
+  if (loginStore.token != '' && loginStore.user != {}) {
+    return {
+      login: true,
+      avatar: loginStore.user.avatar
+    }
+  }
+}
+
 export default defineComponent({
   name: 'AppTabBar',
   components: {
@@ -60,7 +73,8 @@ export default defineComponent({
     const comiclistVisible = ref(false)
     return {
       comiclistVisible,
-      ...daytimeModule()
+      ...daytimeModule(), 
+      ...loginModule(), 
     }
   }
 })
