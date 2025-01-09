@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <Particles id="tsparticles" class="login__particles" :options="options" />
+    <!-- <Particles id="tsparticles" class="login__particles" :options="options" /> -->
  
     <div class="loginPart">
       <h2>登录</h2>

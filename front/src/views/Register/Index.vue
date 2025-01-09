@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-      <Particles id="tsparticles" class="login__particles" :options="options" />
+      <!-- <Particles id="tsparticles" class="login__particles" :options="options" /> -->
    
       <div class="loginPart">
         <h2>注册</h2>
@@ -145,7 +145,6 @@
   // 定义验证规则的类型
   interface ValidationRule {
     required?: boolean;
-    message: string;
     trigger: string | string[];
     validator?: (rule: any, value: any, callback: (error?: Error) => void) => void;
   }
@@ -171,15 +170,15 @@
 
   // 定义验证规则，注意这里不直接引用 formState，而是在验证器内部通过闭包访问
   const rules: ValidationRules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  username: [{ required: true, trigger: 'blur' }],
+  password: [{ required: true, trigger: 'blur' }],
   confirmPassword: [
-    { required: true, message: '请确认密码', trigger: 'blur' },
+    { required: true, trigger: 'blur' },
     {
-      validator: (rule, value, callback) => {
+      validator: (rule: any, value: any, callback: (error?: Error) => void) => {
         if (value === '') {
           callback(new Error('请再次输入密码'));
-        } else if (value !== registerForm.password) {
+        } else if (value !== registerForm.value.password) {
           callback(new Error('两次密码不一致'));
         } else {
           callback();
@@ -187,9 +186,9 @@
       },
       trigger: 'blur',
     },
-  ],
+    ],
   // 可以添加其他字段的规则
-};
+  };
 
    
   const router = useRouter();
