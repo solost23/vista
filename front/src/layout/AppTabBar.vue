@@ -55,7 +55,7 @@ function daytimeModule() {
 function loginModule() {
   const loginStore = LoginStore();
   loginStore.init();
-  if (loginStore.token != '' && loginStore.user != {}) {
+  if (loginStore.token != '') {
     return {
       login: true,
       avatar: loginStore.user.avatar

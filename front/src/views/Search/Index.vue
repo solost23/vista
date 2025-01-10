@@ -142,7 +142,7 @@ function filterModule(init: () => void) {
   })
   const pager = reactive({
     currnet: 1,
-    size: 20,
+    size: 60,
     total: 0
   })
   const filterVisible = ref(true)
@@ -272,6 +272,7 @@ export default defineComponent({
       clear && resetName()
       const { data, total } = await Api.filterComic({
         page: pager.currnet,
+        size: pager.size, 
         type: filter.cate,
         category: filter.type,
         order: filter.order,

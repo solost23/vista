@@ -59,6 +59,7 @@ export async function filterComic(param: {
   /** 年份 */
   year?: number
   page: number
+  size: number 
 }): Promise<FnReturns.FilterComicReturn> {
   try {
     const api = Object.entries(param).reduce((total, [k, v]) => {
