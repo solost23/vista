@@ -3,6 +3,7 @@ package controllers
 import (
 	"vista/forms"
 	"vista/pkg/constants"
+	"vista/pkg/middlewares"
 	"vista/pkg/response"
 	"vista/pkg/utils"
 	"vista/services"
@@ -32,6 +33,10 @@ func VideoRegister(router *gin.RouterGroup) {
 	router.GET("config", controller.config)
 	// 获取混合列表
 	router.GET("index", controller.index)
+
+	// 删除视频
+	apiRouter := router.Group("")
+	apiRouter.Use(middlewares.JWTAuth()).DELETE(":id", controller.delete)
 }
 
 func (*VideoController) uploadCover(c *gin.Context) {
@@ -128,4 +133,14 @@ func (*VideoController) config(c *gin.Context) {
 
 func (*VideoController) index(c *gin.Context) {
 	videoService.Index(c)
+}
+
+func (*VideoController) delete(c *gin.Context) {
+	UID := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UID); err != nil {
+		response.Error(c, constants.BadRequestCode, err)
+		return
+	}
+
+	videoService.Delete(c, UID.Id)
 }

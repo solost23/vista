@@ -4,7 +4,6 @@ import (
 	"errors"
 	"math/rand"
 	"mime/multipart"
-	"strconv"
 	"strings"
 	"time"
 	"vista/forms"
@@ -300,36 +299,36 @@ import (
 // 	return response, nil
 // }
 
-func (s *Service) VideoDelete(c *gin.Context, id uint) (err error) {
-	// base logic: 删视频，删评论
-	db := global.DB
-	tx := db.Begin()
+// func (s *Service) VideoDelete(c *gin.Context, id uint) (err error) {
+// 	// base logic: 删视频，删评论
+// 	db := global.DB
+// 	tx := db.Begin()
 
-	query := []string{"id = ?"}
-	args := []interface{}{id}
-	_, err = (&models.Video{}).WhereOne(db, strings.Join(query, " AND "), args...)
-	if err != nil {
-		return err
-	}
-	err = (&models.Video{}).Delete(tx, strings.Join(query, " AND "), args...)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	query = []string{"video_id = ?"}
-	err = (&models.Comment{}).Delete(tx, strings.Join(query, " AND "), args...)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	_ = tx.Commit().Error
-	z := NewZinc()
-	err = z.DeleteDocument(c, constants.ZINCINDEXVIDEO, strconv.Itoa(int(id)))
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// 	query := []string{"id = ?"}
+// 	args := []interface{}{id}
+// 	_, err = (&models.Video{}).WhereOne(db, strings.Join(query, " AND "), args...)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = (&models.Video{}).Delete(tx, strings.Join(query, " AND "), args...)
+// 	if err != nil {
+// 		tx.Rollback()
+// 		return err
+// 	}
+// 	query = []string{"video_id = ?"}
+// 	err = (&models.Comment{}).Delete(tx, strings.Join(query, " AND "), args...)
+// 	if err != nil {
+// 		tx.Rollback()
+// 		return err
+// 	}
+// 	_ = tx.Commit().Error
+// 	z := NewZinc()
+// 	err = z.DeleteDocument(c, constants.ZINCINDEXVIDEO, strconv.Itoa(int(id)))
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
 // func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (id uint, err error) {
 // 	db := global.DB
@@ -875,4 +874,50 @@ func (*VideoService) Index(c *gin.Context) {
 		Perweek:       perweek,
 		TheatreComic:  theatreComic,
 	})
+}
+
+func (*VideoService) Delete(c *gin.Context, videoID uint) {
+	db := global.DB
+	sqlVideo, err := models.GWhereFirstSelect[models.Video](db, "creator_id", "id = ?", videoID)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.BadRequestCode, errors.New("视频不存在"))
+		return
+	}
+	if sqlVideo.CreatorId != uint(c.Value("userId").(int)) {
+		response.Error(c, constants.BadRequestCode, errors.New("没有权限"))
+		return
+	}
+
+	tx := db.Begin()
+	commit := false
+	defer func() {
+		if commit {
+			tx.Commit()
+		} else {
+			tx.Rollback()
+		}
+	}()
+
+	// 删除视频本身
+	if err = models.GDelete[models.Video](tx, "id = ?", videoID); err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	// 删除视频下属播放列表
+	if err = models.GDelete[models.Playlist](tx, "video_id = ?", videoID); err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	// 删除视频与模块关系
+	if err = models.GDelete[models.CategoryVideo](tx, "video_id = ?", videoID); err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	commit = true
+	response.Success(c, "success")
 }

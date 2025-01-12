@@ -37,7 +37,8 @@ func paginate(page, size *int, db *gorm.DB) *gorm.DB {
 	return db.Offset(offset).Limit(*size)
 }
 
-func GDelete[T any](db *gorm.DB, t *T, query string, args ...any) error {
+func GDelete[T any](db *gorm.DB, query string, args ...any) error {
+	var t T
 	return db.Model(t).Where(query, args...).Delete(&t).Error
 }
 

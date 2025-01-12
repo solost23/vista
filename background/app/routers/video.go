@@ -2,7 +2,6 @@ package routers
 
 import (
 	"vista/pkg/response"
-	"vista/pkg/utils"
 	"vista/services"
 
 	"github.com/gin-gonic/gin"
@@ -51,18 +50,18 @@ func videoUploadVid(c *gin.Context) {
 // 	response.Success(c, id)
 // }
 
-func videoDelete(c *gin.Context) {
-	UIdForm := &utils.UIdForm{}
-	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
-	if err := (&services.Service{}).VideoDelete(c, UIdForm.Id); err != nil {
-		response.Error(c, 2001, err)
-		return
-	}
-	response.MessageSuccess(c, "成功", nil)
-}
+// func videoDelete(c *gin.Context) {
+// 	UIdForm := &utils.UIdForm{}
+// 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
+// 	if err := (&services.Service{}).VideoDelete(c, UIdForm.Id); err != nil {
+// 		response.Error(c, 2001, err)
+// 		return
+// 	}
+// 	response.MessageSuccess(c, "成功", nil)
+// }
 
 // func videoDetail(c *gin.Context) {
 // 	UIdForm := &utils.UIdForm{}
