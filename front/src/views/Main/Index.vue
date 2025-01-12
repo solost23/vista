@@ -3,7 +3,9 @@
     <div v-if="!spa" class="comic-main__break">
       <Icon name="arrow" @click="$router.go(-1)" />
     </div>
-
+    <div v-if="!spa" class="comic-main__btn">
+      <button @click="deleteVideo(id)">视频删除</button>
+    </div>
     <div class="comic-main__inner">
       <div class="comic-main__video">
         <AwVideo
@@ -63,7 +65,7 @@ import {
   toRef,
   watch
 } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import AwVideo from '@comps/AwVideo/AwVideo.vue'
 import { ElNotification } from 'element-plus'
@@ -429,6 +431,19 @@ export default defineComponent({
 
     onBeforeUnmount(saveStores)
 
+    /** 视频删除 */
+    const router = useRouter()
+    const deleteVideo = async (id: string | number) => {
+      const data = await Api.deleteVideo(id);
+      if (data) {
+        router.go(-1);
+        ElNotification({
+          title: '删除成功',
+          type: 'success',
+        });
+      }
+    }
+
     return {
       ...comicInfoModuleArgs,
       comic,
@@ -443,7 +458,8 @@ export default defineComponent({
       onCurrentAnthologyChange,
       onVideoError,
       nextAnthology,
-      saveStores
+      saveStores, 
+      deleteVideo
     }
   }
 })

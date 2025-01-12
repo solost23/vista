@@ -1,4 +1,4 @@
-import { getax, postax } from '@/common/request/index'
+import { deleteax, getax, postax } from '@/common/request/index'
 import { getVal } from '@sorarain/utils'
 import * as FnReturns from './type'
 import * as ApiType from './api.type'
@@ -274,9 +274,30 @@ export async function register(params: {
       })
       return null
     }
-    return 'success'
   } catch {
     badRequestNotify('/register')
+  }
+  return 'success'
+}
+
+/**
+ * 删除视频
+ */
+export async function deleteVideo(
+  key: string| number 
+): Promise<string | null> {
+  try {
+    const { data } = await deleteax<ApiType.DeleteVideo>(`/video/${key}`)
+    if (data.code != 0 && data.success == false) {
+      ElNotification({
+        title: "删除失败", 
+        message: data.message, 
+        type: 'error'
+      })
+      return null
+    }
+  } catch {
+    badRequestNotify('/video/delete')
   }
   return 'success'
 }

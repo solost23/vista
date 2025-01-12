@@ -56,6 +56,12 @@ export default class AxiosUtils {
       // if (token) {
       //   request.headers['authorization'] = this.getToken()
       // }
+
+      const token = localStorage.getItem('TOKEN');
+      if (token) {
+        request.headers['token'] = token;
+      }
+
       return request
     })
   }

@@ -274,3 +274,4 @@ export type Login = ApiFormat<{
 }>
 
 export type Register = ApiFormat<string> 
+export type DeleteVideo = ApiFormat<string>

@@ -31,6 +31,15 @@ export function postax<T>(url: string, params = {}, config = {}) {
 }
 
 /**
+ * 请求 - delete
+ * @param url 请求地址
+ * @returns 
+ */
+export function deleteax<T>(url: string) {
+  return instance.delete<T>(url)
+}
+
+/**
  * 基于axios的请求 - get
  * @param url 完整请求地址
  * @returns
