@@ -263,6 +263,7 @@ export async function register(params: {
   username: string 
   password: string 
   role: number 
+  avatar: string
 }): Promise<string | null> {
   try {
     const { data } = await postax<ApiType.Register>('/register', params)
