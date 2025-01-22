@@ -17,13 +17,14 @@ export async function searchComic(param: {
   name: string
   page: number
 }): Promise<FnReturns.SearchComicReturn> {
+  const url = `/video/search`
   try {
     const {
       data: {
         data: { results, pagetotal }
       }
     } = await getax<ApiType.Search>(
-      `/video/search?page=${param.page}&name=${param.name}`
+      url + `?page=${param.page}&name=${param.name}`
     )
     if (results instanceof Array) {
       return {
@@ -34,7 +35,7 @@ export async function searchComic(param: {
       throw newError()
     }
   } catch {
-    badRequestNotify('/video/search')
+    badRequestNotify(url)
     return {
       data: [],
       total: 0
@@ -61,10 +62,11 @@ export async function filterComic(param: {
   page: number
   size: number 
 }): Promise<FnReturns.FilterComicReturn> {
+  const url: string = `/video/filter`
   try {
     const api = Object.entries(param).reduce((total, [k, v]) => {
       return v !== '' ? `${total}&${k}=${v}` : total
-    }, '/video/filter?')
+    }, url + `?`)
 
     const { data } = await getax<ApiType.Filter>(api)
     return {
@@ -77,7 +79,7 @@ export async function filterComic(param: {
       total: data?.data?.total || 0
     }
   } catch {
-    badRequestNotify('/vieo/filter')
+    badRequestNotify(url)
     return {
       data: [],
       total: 0
@@ -91,12 +93,13 @@ export async function filterComic(param: {
  * @returns
  */
 export async function getComicMain(
-  id: number | string
+  key: number | string
 ): Promise<FnReturns.GetComicMainReturn | null> {
+  const url: string = `/video/${key}`
   try {
     const {
       data: { data }
-    } = await getax<ApiType.GetAnime>(`video/${id}`)
+    } = await getax<ApiType.GetAnime>(url)
 
     const playlist = new Map()
     Object.entries(data.playlist || {}).forEach(([k, v]) => {
@@ -123,7 +126,7 @@ export async function getComicMain(
       cates: data.categories || []
     }
   } catch {
-    badRequestNotify('/video/:id')
+    badRequestNotify(url)
     return null
   }
 }
@@ -136,10 +139,11 @@ export async function getComicMain(
 export async function getVideoUrl(
   key: string | number
 ): Promise<FnReturns.GetVideoUrlReturn> {
+  const url: string = `/video/${key}/playlist`
   try {
     const {
       data: { data }
-    } = await await getax<ApiType.GetVideo>(`/video/${key}/playlist`)
+    } = await await getax<ApiType.GetVideo>(url)
     return Object.entries(data).map(([k, v]) => ({
       key: k,
       value: (v instanceof Array ? v : []).map((url) =>
@@ -147,7 +151,7 @@ export async function getVideoUrl(
       ) as string[]
     }))
   } catch (e) {
-    badRequestNotify('/video/:key/playlist')
+    badRequestNotify(url)
     console.error(e)
     return []
   }
@@ -158,8 +162,9 @@ export async function getVideoUrl(
  * @returns
  */
 export async function getHomeMixData(): Promise<FnReturns.GetHomeMixData | null> {
+  const url: string = `/video/index`
   try {
-    const { data } = await getax<ApiType.GetIndex>('/video/index')
+    const { data } = await getax<ApiType.GetIndex>(url)
     const listFormat = (list: any[]) =>
       list.slice(0, 10).map((item) => ({
         cover: item.cover,
@@ -197,7 +202,7 @@ export async function getHomeMixData(): Promise<FnReturns.GetHomeMixData | null>
     }
     // return
   } catch (e) {
-    badRequestNotify('/video/index')
+    badRequestNotify(url)
     console.error(e)
     return null
   }
@@ -208,8 +213,9 @@ export async function getHomeMixData(): Promise<FnReturns.GetHomeMixData | null>
  * @returns
  */
 export async function getComicFilterConfig(): Promise<FnReturns.GetComicFilterConfig> {
+  const url: string = `/video/config`
   try {
-    const { data } = await getax<ApiType.GetConfig>('/video/config')
+    const { data } = await getax<ApiType.GetConfig>(url)
     return getVal(() => data.data.filtersConfig, []).map((item) => ({
       id: item.id,
       name: item.name,
@@ -219,7 +225,7 @@ export async function getComicFilterConfig(): Promise<FnReturns.GetComicFilterCo
       }))
     }))
   } catch {
-    badRequestNotify('/video/config')
+    badRequestNotify(url)
     return []
   }
 }
@@ -233,8 +239,9 @@ export async function login(params: {
   password: string 
   device: string 
 }): Promise<FnReturns.Login | null> {
+  const url: string = `/login`
   try {
-    const { data } = await postax<ApiType.Login>('/login', params)
+    const { data } = await postax<ApiType.Login>(url, params)
     if (data.code != 0 && data.success == false) {
       ElNotification({
         title: '登陆失败',
@@ -250,7 +257,7 @@ export async function login(params: {
       token: data.data.token, 
     }
   } catch {
-    badRequestNotify('/login')
+    badRequestNotify(url)
     return null
   }
 }
@@ -265,8 +272,9 @@ export async function register(params: {
   role: number 
   avatar: string
 }): Promise<string | null> {
+  const url: string = `/register`
   try {
-    const { data } = await postax<ApiType.Register>('/register', params)
+    const { data } = await postax<ApiType.Register>(url, params)
     if (data.code != 0 && data.success == false) {
       ElNotification({
         title: '注册失败',
@@ -276,7 +284,8 @@ export async function register(params: {
       return null
     }
   } catch {
-    badRequestNotify('/register')
+    badRequestNotify(url)
+    return null 
   }
   return 'success'
 }
@@ -287,8 +296,9 @@ export async function register(params: {
 export async function deleteVideo(
   key: string| number 
 ): Promise<string | null> {
+  const url: string = `/video/${key}`
   try {
-    const { data } = await deleteax<ApiType.DeleteVideo>(`/video/${key}`)
+    const { data } = await deleteax<ApiType.DeleteVideo>(url)
     if (data.code != 0 && data.success == false) {
       ElNotification({
         title: "删除失败", 
@@ -298,7 +308,60 @@ export async function deleteVideo(
       return null
     }
   } catch {
-    badRequestNotify('/video/delete')
+    badRequestNotify(url)
+    return null 
   }
   return 'success'
+}
+
+/**
+ * 提交评论
+ */
+export async function createComment(
+  key: number | string,
+  params: {
+    parentId: number, 
+    content: string, 
+  }
+): Promise<string | null> {
+  const url: string = `/video/${key}/comment`
+  try {
+    const { data } = await postax<ApiType.CreateComment>(url, params)
+    if (data.code != 0 && data.success == false) {
+      ElNotification({
+        title: "评论失败", 
+        message: data.message, 
+        type: 'error'
+      })
+      return null
+    }
+  } catch {
+    badRequestNotify(url)
+    return null 
+  }
+  return 'success'
+}
+
+/**
+ * 获取评论
+ */
+export async function getComments(
+  key: number | string
+): Promise<FnReturns.GetCommentsData | null> {
+  const url: string = `/video/${key}/comment`
+  try {
+    const { data } = await getax<ApiType.GetComment>(url)
+    if (data.code != 0 && data.success == false) {
+      ElNotification({
+        title: "获取评论失败", 
+        message: data.message, 
+        type: 'error'
+      })
+      return null 
+    }
+    return data.data 
+  } catch {
+    badRequestNotify(url)
+    return null 
+  }
 }

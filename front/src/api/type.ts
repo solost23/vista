@@ -196,3 +196,30 @@ export type Login = {
   avatar: string    
   token: string 
 }
+
+export type GetCommentsData = {
+  id: number
+  parentId: number
+  uid: number 
+  content: string 
+  createdAt: string 
+  user: {
+    username: string
+    avatar: string 
+    homelink: string 
+  }
+  reply: {
+    total: number 
+    list: {
+      id: number
+      parentId: number 
+      uid: number 
+      content: string 
+      createdAt: string 
+      user: {
+        username: string
+        avatar: string 
+      }
+    }[]
+  }
+}[]

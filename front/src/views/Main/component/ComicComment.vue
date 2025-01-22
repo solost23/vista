@@ -13,22 +13,17 @@
 </template>
   
 <script setup lang="ts">
-  import { reactive, defineProps } from 'vue'
-  import { UToast, Time, CommentApi, CommentSubmitApi, ConfigApi } from 'undraw-ui'
+  import { reactive, defineProps } from 'vue';
+  import { UToast, Time, CommentApi, CommentSubmitApi, ConfigApi } from 'undraw-ui';
+
+  import * as Api from '@/api'
 
   interface Form {
-    id: {
-        type: [Number, String], 
-        default: -1, 
-    }
+    id: number | string
   }
-
   const props = defineProps<Form>()
 
-  console.log("id: ", props.id)
-
   const config = reactive<ConfigApi>({
-    ...props.id, // 文章ID 
     user: {} as any, // 当前用户信息
     comments: [], // 评论数据
     relativeTime: true, // 开启人性化时间
@@ -113,32 +108,37 @@
     }
     config.comments = comments
   }, 500)
-  
-  // 评论提交事件
-  let temp_id = 100
-  // 提交评论事件
-  const submit = ({ content, parentId, finish }: CommentSubmitApi) => {
-    let str = '提交评论:' + content + ';\t父id: ' + parentId
-    console.log(str)
-  
-    // 模拟请求接口生成数据
-    const comment: CommentApi = {
-      id: String((temp_id += 1)),
-      parentId: parentId,
-      uid: config.user.id,
-      content: content,
-      createTime: new Time().toString(),
-      user: {
-        username: config.user.username,
-        avatar: config.user.avatar
-      },
-      reply: null
+
+  // 获取评论数据
+  const getComments = async () => {
+    const data = await Api.getComments(props.id)
+    if (data) {
+      config.comments = data 
     }
-    setTimeout(() => {
-      finish(comment)
-      UToast({ message: '评论成功!', type: 'info' })
-    }, 200)
   }
+  getComments()
+
+  // 发送评论
+  const submit = async ({ content, parentId, finish}: CommentSubmitApi) => {
+    const createComment = async () => {
+      const data = await Api.createComment(
+        props.id, 
+        {
+          parentId: Number(parentId),
+          content: content,
+        }, 
+      )
+      if (data) {
+        UToast({
+          message: '评论成功!',
+          type: 'info', 
+        })
+      }
+    }
+
+    createComment();
+  }
+  
 </script>
   
 <style lang="less" scoped>
