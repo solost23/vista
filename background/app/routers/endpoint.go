@@ -104,9 +104,9 @@ func initAuthVideoRouter(group *gin.RouterGroup) {
 func initAuthCommentRouter(group *gin.RouterGroup) {
 	comment := group.Group("comments")
 	{
-		comment.POST("", commentCreate)
+		// comment.POST("", commentCreate)
 		comment.DELETE(":id", commentDelete)
-		comment.GET("", commentList)
+		// comment.GET("", commentList)
 	}
 }
 

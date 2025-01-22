@@ -41,7 +41,7 @@ func main() {
 	}
 
 	initialize.Initialize(path.Join(execDir, WebConfigPath))
-	if err := global.DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Video{}, &models.CategoryVideo{}, &models.Playlist{}); err != nil {
+	if err := global.DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Video{}, &models.CategoryVideo{}, &models.Playlist{}, &models.Comment{}); err != nil {
 		zap.S().Panic(err)
 	}
 

@@ -921,3 +921,85 @@ func (*VideoService) Delete(c *gin.Context, videoID uint) {
 	commit = true
 	response.Success(c, "success")
 }
+
+func (*VideoService) InsertComment(c *gin.Context, videoID uint, params *forms.InsertCommentForm) {
+	user := utils.GetUser(c)
+	db := global.DB
+	_, err := models.GWhereFirstSelect[models.Video](db, "id", "id = ?", videoID)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.BadRequestCode, errors.New("视频不存在"))
+		return
+	}
+
+	// 查询父评论是否存在
+	if params.ParentID != 0 {
+		_, err = models.GWhereFirstSelect[models.Comment](db, "id", "id = ?", params.ParentID)
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			response.Error(c, constants.InternalServerErrorCode, err)
+			return
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			response.Error(c, constants.BadRequestCode, errors.New("父评论不存在"))
+			return
+		}
+	}
+
+	sqlComment := &models.Comment{
+		CreatorBase: models.CreatorBase{
+			CreatorId: user.ID,
+		},
+		VideoId:  videoID,
+		Content:  params.Content,
+		ParentId: params.ParentID,
+		Likes:    0,
+	}
+	if err = models.GInsert(db, sqlComment); err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+
+	response.Success(c, "success")
+}
+
+func (*VideoService) GetComments(c *gin.Context, videoID uint) {
+	db := global.DB
+	_, err := models.GWhereFirstSelect[models.Video](db, "id", "id = ?", videoID)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		response.Error(c, constants.BadRequestCode, errors.New("视频不存在"))
+		return
+	}
+
+	sqlComments, err := models.GWhereAllSelect[models.Comment](db, "*", "video_id = ?", videoID)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	if len(sqlComments) == 0 {
+		response.Success(c, nil)
+		return
+	}
+
+	creatorIds := make([]uint, 0, len(sqlComments))
+	for i := 0; i != len(sqlComments); i++ {
+		creatorIds = append(creatorIds, sqlComments[i].CreatorId)
+	}
+
+	sqlUsers, err := models.GWhereAllSelect[models.User](db, "id,username,avatar", "id IN (?)", creatorIds)
+	if err != nil {
+		response.Error(c, constants.InternalServerErrorCode, err)
+		return
+	}
+	userIdMap := make(map[uint]models.User, len(sqlUsers))
+	for i := 0; i != len(sqlUsers); i++ {
+		userIdMap[sqlUsers[i].ID] = sqlUsers[i]
+	}
+
+}

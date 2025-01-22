@@ -37,6 +37,11 @@ func VideoRegister(router *gin.RouterGroup) {
 	// 删除视频
 	apiRouter := router.Group("")
 	apiRouter.Use(middlewares.JWTAuth()).DELETE(":id", controller.delete)
+
+	// 创建评论
+	apiRouter.POST(":id/comment", controller.insertComment)
+	// 评论树
+	apiRouter.GET(":id/comment", controller.getComments)
 }
 
 func (*VideoController) uploadCover(c *gin.Context) {
@@ -143,4 +148,29 @@ func (*VideoController) delete(c *gin.Context) {
 	}
 
 	videoService.Delete(c, UID.Id)
+}
+
+func (*VideoController) insertComment(c *gin.Context) {
+	UID := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UID); err != nil {
+		response.Error(c, constants.BadRequestCode, err)
+		return
+	}
+	params := &forms.InsertCommentForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, constants.BadRequestCode, err)
+		return
+	}
+
+	videoService.InsertComment(c, UID.Id, params)
+}
+
+func (*VideoController) getComments(c *gin.Context) {
+	UID := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UID); err != nil {
+		response.Error(c, constants.BadRequestCode, err)
+		return
+	}
+
+	videoService.GetComments(c, UID.Id)
 }
