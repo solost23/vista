@@ -11,7 +11,7 @@
   >
     <div class="aw-video__progress-tooltip" :style="tooltipStyle">
       <div class="preview" :style="previewStyle">
-        <img v-if="previewImg" :src="previewImg" />
+        <img v-if="previewImg" :src="previewImg"></img>
         <span>{{ sToMs(tooltipTime) }}</span>
       </div>
     </div>

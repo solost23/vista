@@ -17,7 +17,7 @@
           @mouseup.prevent="endMove"
           @mouseout="self.isDown = false"
         >
-          <img :src="currentImg" />
+          <img :src="currentImg"></img>
         </div>
       </template>
 

@@ -32,6 +32,7 @@
 </template>
 
 <script lang="ts" setup>
+import {Teleport, Transition } from 'vue'
 import { reactive } from 'vue'
 import * as Type from './type'
 import Icon from '@/components/Global/Icon.vue'

@@ -14,8 +14,9 @@
     "moment": "^2.29.1",
     "pinia": "^2.0.9",
     "sorarain": "^0.5.71",
+    "undraw-ui": "^1.2.5",
     "video.js": "^7.17.0",
-    "vue": "^3.2.31",
+    "vue": "^3.5.13",
     "vue-router": "4.1.2"
   },
   "devDependencies": {

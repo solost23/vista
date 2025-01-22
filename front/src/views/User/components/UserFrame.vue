@@ -15,7 +15,7 @@
       <router-view v-slot="{ Component }">
         <transition name="route-transition">
           <keep-alive>
-            <component :is="Component" v-bind="$attrs" />
+            <component :is="Component" v-bind="$attrs"></component>
           </keep-alive>
         </transition>
       </router-view>

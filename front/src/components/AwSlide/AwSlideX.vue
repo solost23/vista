@@ -2,7 +2,7 @@
   <div ref="selfDom" class="aw-slide-x">
     <div class="aw-slide-content">
       <div class="aw-slide__inner" :class="innerClass" :style="innerStyle">
-        <slot />
+        <slot></slot>
       </div>
     </div>
     <transition

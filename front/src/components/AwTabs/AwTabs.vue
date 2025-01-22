@@ -15,7 +15,7 @@
     </div>
     <div class="aw-tabs__content">
       <div class="aw-tabs__panel" :style="panelStyle">
-        <slot />
+        <slot></slot>
       </div>
     </div>
   </div>

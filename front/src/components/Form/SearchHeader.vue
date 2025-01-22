@@ -9,7 +9,7 @@
         @keyup.enter="emit('search')"
         @input="updateValue"
         @focus="state.using = true"
-      />
+      ></input>
       <Icon
         class="search-icon"
         :name="modelValue !== '' ? 'delete1' : 'iconsearch'"
@@ -55,7 +55,7 @@
         </AwListModifyTransition>
       </div>
     </div>
-    <slot />
+    <slot></slot>
   </header>
 </template>
 

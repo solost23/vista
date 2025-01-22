@@ -3,7 +3,7 @@
     enter-active-class="anm animate__fadeIn"
     leave-active-class="anm animate__fadeOutDown"
   >
-    <slot v-if="!pending" />
+    <slot v-if="!pending"></slot>
   </transition>
   <div v-show="pending" class="aw-search-loading"></div>
 </template>

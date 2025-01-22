@@ -7,7 +7,7 @@
     @before-enter="beforeEnter"
     @enter="enter"
   >
-    <slot v-if="!isActive" />
+    <slot v-if="!isActive"></slot>
   </transition-group>
 </template>
 

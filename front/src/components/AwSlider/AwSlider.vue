@@ -18,11 +18,11 @@
             :class="{ active: isDraging }"
           ></div>
           <div v-else class="default icon" :class="{ active: isDraging }">
-            <img :src="btnIcon" alt="" />
+            <img :src="btnIcon" alt=""></img>
           </div>
         </div>
       </div>
-      <slot name="runway" />
+      <slot name="runway"></slot>
     </div>
   </div>
 </template>

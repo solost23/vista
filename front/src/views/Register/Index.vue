@@ -47,9 +47,9 @@
             :before-upload="beforeAvatarUpload"
             :file-list="registerForm.fileList"
           >
-            <img v-if="registerForm.avatar" :src="registerForm.avatar" class="register-main__upload__avatar" />
+            <img v-if="registerForm.avatar" :src="registerForm.avatar" class="register-main__upload__avatar"></img>
             <!-- <i v-else class="el-icon-plus avatar-uploader-icon"></i> -->
-            <img v-else src="/android-chrome-192x192.png" class="register-main__upload__avatar" />
+            <img v-else src="/android-chrome-192x192.png" class="register-main__upload__avatar"></img>
           </el-upload>
         </el-form-item>
         <!-- <el-form-item label="验证码" prop="code">

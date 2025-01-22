@@ -72,7 +72,7 @@
         content="什么信息都没找到，甚至还白嫖了顿饭~"
         height="60%"
       >
-        <img src="~static/img/search-empty.png" style="width: 100%" alt="" />
+        <img src="~static/img/search-empty.png" style="width: 100%" alt=""></img>
       </EmptyImgBlock>
       <div class="search-main__content">
         <ComicCard

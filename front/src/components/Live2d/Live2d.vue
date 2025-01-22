@@ -1,6 +1,6 @@
 <template>
   <div v-moveable class="live2d" :style="selfStyle">
-    <canvas ref="cvs" />
+    <canvas ref="cvs"></canvas>
   </div>
 </template>
 

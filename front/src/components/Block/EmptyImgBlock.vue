@@ -1,7 +1,7 @@
 <template>
   <div class="empty-img-block">
     <div class="empty-img-block__inner">
-      <slot />
+      <slot></slot>
     </div>
     <p>{{ content }}</p>
   </div>

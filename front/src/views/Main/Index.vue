@@ -41,10 +41,25 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="详情" lazy>
-            <ComicMainInfo :id="id" :comic="comic" />
+            <ComicMainInfo 
+            :id="id" 
+            :comic="comic" 
+            />
+          </el-tab-pane>
+          <el-tab-pane label="评论" lazy>
+            <!-- <u-fold unfold line="1">
+              <p>
+                时间不是某种从我们身上流过的东西，而就是我的生命。弃我而去的不是日历上的一个个日子，而是我生命中的岁月；甚至也不仅仅是我的岁月，而就是我自己。我不但找不回逝去的岁月，而且也找不回从前的我了。
+              </p>
+            </u-fold> -->
+            <ComicComment
+            :id="id"
+            />
           </el-tab-pane>
           <el-tab-pane v-if="comicImglist.length > 0" label="相关图片" lazy>
-            <ComicImglist :imgs="comicImglist" />
+            <ComicImglist 
+            :imgs="comicImglist" 
+            />
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -72,6 +87,7 @@ import { ElNotification } from 'element-plus'
 import ComicAnthology, { ChangeReturns } from './component/ComicAnthology.vue'
 import ComicImglist from './component/ComicImglist.vue'
 import ComicMainInfo from './component/ComicMainInfo.vue'
+import ComicComment from './component/ComicComment.vue'
 
 import { usePlayCache } from '@/hooks/user'
 import { useKoharu } from '@/stores/koharu.store'
@@ -147,7 +163,8 @@ export default defineComponent({
     AwVideo,
     ComicAnthology,
     ComicImglist,
-    ComicMainInfo
+    ComicMainInfo, 
+    ComicComment, 
   },
   props: {
     id: {

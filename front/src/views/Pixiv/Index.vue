@@ -44,7 +44,7 @@
                 opacity: pixivMainId === item.id ? 0 : 1
               }"
             >
-              <img :src="item.preurl" @click="(e) => toMain(e, item)" />
+              <img :src="item.preurl" @click="(e: Event) => toMain(e, item)"></img>
               <div v-if="item.total > 1" class="total">
                 <b>{{ item.total }}</b>
               </div>
@@ -58,7 +58,7 @@
 
     <router-view v-slot="{ Component }">
       <keep-alive>
-        <component :is="Component" />
+        <component :is="Component"></component>
       </keep-alive>
     </router-view>
   </div>

@@ -66,7 +66,7 @@
             v-model="progress.inputVal"
             type="text"
             @keyup.enter="endProgressInput"
-          />
+          ></input>
         </div>
       </div>
       <!-- <div

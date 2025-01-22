@@ -3,7 +3,7 @@
     <div class="codePen-card__content">
       <div class="cover">
         <BaseImg :src="detail.cover" />
-        <slot name="cover" />
+        <slot name="cover"></slot>
       </div>
       <div class="info">
         <BaseImg class="info-avatar" :src="detail.avatar" />

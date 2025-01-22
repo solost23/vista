@@ -61,7 +61,7 @@
       content="无聊如你"
       height="60%"
     >
-      <img src="~static/img/history-empty.png" style="width: 100%" />
+      <img src="~static/img/history-empty.png" style="width: 100%"></img>
     </EmptyImgBlock>
 
     <AdBreakTop target=".play-history" />

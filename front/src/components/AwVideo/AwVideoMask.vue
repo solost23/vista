@@ -15,11 +15,11 @@
     </div>
   </transition>
   <div v-show="status === Type.PlayerStatus.Failed" class="aw-video__bad">
-    <img src="~static/img/video-bad.png" />
+    <img src="~static/img/video-bad.png"></img>
     <span>加载失败了，好耶！</span>
   </div>
   <div v-if="!src && !waiting" class="aw-video__bad">
-    <img src="~static/img/video-empty.png" />
+    <img src="~static/img/video-empty.png"></img>
     <span>暂无播放内容~</span>
   </div>
 </template>

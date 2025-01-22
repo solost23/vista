@@ -1,6 +1,6 @@
 <template>
   <div class="aw-slide-item">
-    <slot />
+    <slot></slot>
   </div>
 </template>
 

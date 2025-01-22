@@ -1,6 +1,6 @@
 <template>
   <i class="iconfont" :class="fullName">
-    <slot />
+    <slot></slot>
   </i>
 </template>
 

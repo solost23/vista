@@ -1,9 +1,9 @@
 <template>
   <template v-if="!isInit">
-    <slot key="fake" name="fake" />
+    <slot key="fake" name="fake"></slot>
   </template>
   <template v-else>
-    <slot key="content" name="content" />
+    <slot key="content" name="content"></slot>
   </template>
 </template>
 

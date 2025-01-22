@@ -5,7 +5,7 @@
     class="attached-container"
     :style="selfStyle"
   >
-    <slot />
+    <slot></slot>
   </div>
 </template>
 

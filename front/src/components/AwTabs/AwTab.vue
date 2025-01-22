@@ -1,6 +1,6 @@
 <template>
   <div v-if="loaded" class="aw-tab" :style="styleStyle">
-    <slot />
+    <slot></slot>
   </div>
 </template>
 

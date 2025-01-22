@@ -5,7 +5,7 @@
     @before-enter="onBeforeEnter"
     @enter="onEnter"
   >
-    <slot />
+    <slot></slot>
   </transition-group>
 </template>
 

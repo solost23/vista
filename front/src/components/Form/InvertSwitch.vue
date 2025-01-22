@@ -9,7 +9,7 @@
     "
   >
     <span class="invert-switch__check">
-      <slot name="icon" :active="modelValue" />
+      <slot name="icon" :active="modelValue"></slot>
     </span>
   </div>
 </template>

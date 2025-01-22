@@ -1,7 +1,7 @@
 <template>
   <!-- 大坑：由于videojs会在video标签上套一层节点，导致裸video标签时vue无法正常卸载节点 -->
   <div class="video-render">
-    <video ref="videoEl" :style="videoStyle" v-bind="$attrs" />
+    <video ref="videoEl" :style="videoStyle" v-bind="$attrs"></video>
     <video ref="fakeVideoEl" class="fake"></video>
   </div>
 </template>

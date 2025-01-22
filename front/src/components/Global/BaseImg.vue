@@ -1,6 +1,6 @@
 <template>
-  <img v-if="!loaded" ref="fakeImgEl" :src="BASE_IMG" alt="" />
-  <img v-else :src="src" alt="" />
+  <img v-if="!loaded" ref="fakeImgEl" :src="BASE_IMG" alt=""></img>
+  <img v-else :src="src" alt=""></img>
 </template>
 
 <script lang="ts">

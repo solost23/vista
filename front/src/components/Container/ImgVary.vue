@@ -4,8 +4,8 @@
       enter-active-class="low animate__fadeIn"
       leave-active-class="fast animate__fadeOut"
     >
-      <img v-show="img.visible" key="1" :src="img.paths[1]" />
-      <img v-show="!img.visible" key="2" :src="img.paths[0]" />
+      <img v-show="img.visible" key="1" :src="img.paths[1]"></img>
+      <img v-show="!img.visible" key="2" :src="img.paths[0]"></img>
     </transition-group>
   </div>
 </template>

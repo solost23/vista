@@ -28,7 +28,7 @@
             :src="pixivImgMainList.first"
             @load="onPlateImgLoad"
             @click="preview(pixivImgMainList.first)"
-          />
+          ></img>
           <BaseImg
             v-for="(src, index) in pixivImgMainList.others"
             :key="index"
@@ -55,7 +55,7 @@
         </div>
       </div>
       <div ref="fakeEl" :style="fakeStyle" class="pixiv-main__fake">
-        <img :src="enterRect?.path" alt="" @load="onFakeImgLoad" />
+        <img :src="enterRect?.path" alt="" @load="onFakeImgLoad"></img>
       </div>
     </div>
   </transition>

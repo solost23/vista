@@ -1,6 +1,6 @@
 <template>
   <div ref="selfEl" class="lazy-block">
-    <slot v-if="visible" />
+    <slot v-if="visible"></slot>
   </div>
 </template>
 

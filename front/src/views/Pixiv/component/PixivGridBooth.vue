@@ -2,7 +2,7 @@
   <div class="pixiv-grid-booth">
     <div ref="contentEl" class="content">
       <div v-for="item in page.current" :key="item.id" class="content-item">
-        <img :src="item.cover" @click="toMain(item)" />
+        <img :src="item.cover" @click="toMain(item)"></img>
       </div>
     </div>
     <div v-if="page.total > props.size" class="pager">

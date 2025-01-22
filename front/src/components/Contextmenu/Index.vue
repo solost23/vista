@@ -4,7 +4,7 @@
       v-for="op in options"
       :key="op.text"
       @click="
-        (e) => {
+        (e: any) => {
           op.event?.(e)
           close()
         }

@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { shallowReactive } from 'vue'
 import { jsonParse } from '@sorarain/utils'
 
 export default class BaseList<K = string, V = any> {
@@ -17,7 +17,7 @@ export default class BaseList<K = string, V = any> {
     this.getStore()
   }
 
-  private state = reactive({
+  private state = shallowReactive({
     list: new Map<K, V>()
   })
 

@@ -2,7 +2,7 @@
   <router-view v-slot="{ Component }">
     <transition :name="transition">
       <keep-alive exclude="ComicMain">
-        <component :is="Component" v-bind="$attrs" />
+        <component :is="Component" v-bind="$attrs"></component>
       </keep-alive>
     </transition>
   </router-view>
