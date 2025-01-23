@@ -962,7 +962,17 @@ func (*VideoService) InsertComment(c *gin.Context, videoID uint, params *forms.I
 		return
 	}
 
-	response.Success(c, "success")
+	response.Success(c, forms.InsertComment{
+		ID:        sqlComment.ID,
+		ParentID:  sqlComment.ParentId,
+		UserID:    user.ID,
+		Content:   sqlComment.Content,
+		CreatedAt: sqlComment.CreatedAt.Format("2006-01-02 15:04:05"),
+		InsertUser: forms.CommentUser{
+			Avatar:   utils.FulfillImageOSSPrefix(user.Avatar),
+			Username: user.Username,
+		},
+	})
 }
 
 func (*VideoService) GetComments(c *gin.Context, videoID uint) {
@@ -1002,4 +1012,31 @@ func (*VideoService) GetComments(c *gin.Context, videoID uint) {
 		userIdMap[sqlUsers[i].ID] = sqlUsers[i]
 	}
 
+	result := make([]*forms.CommentList, 0, len(sqlComments))
+	for i := 0; i != len(sqlComments); i++ {
+		result = append(result, &forms.CommentList{
+			Id:        sqlComments[i].ID,
+			ParentId:  sqlComments[i].ParentId,
+			CreatorID: sqlComments[i].CreatorId,
+			Content:   sqlComments[i].Content,
+			CreatedAt: sqlComments[i].CreatedAt.Format("2006-01-02 15:04:05"),
+			CommentUser: forms.CommentUser{
+				Avatar:   utils.FulfillImageOSSPrefix(userIdMap[sqlComments[i].CreatorId].Avatar),
+				Username: userIdMap[sqlComments[i].CreatorId].Username,
+			},
+		})
+	}
+
+	nodeArray := make([]servants.TreeNode, 0, len(result))
+	for i := 0; i != len(result); i++ {
+		nodeArray = append(nodeArray, result[i])
+	}
+
+	list := servants.BuildTree2(c, nodeArray)
+	// transformList := make([]*forms.CommentList, 0)
+	// for i := range list {
+	// 	transformList = append(transformList, list[i].(*forms.CommentList))
+	// }
+
+	response.Success(c, list)
 }

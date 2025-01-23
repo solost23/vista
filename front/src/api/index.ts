@@ -323,10 +323,10 @@ export async function createComment(
     parentId: number, 
     content: string, 
   }
-): Promise<string | null> {
+): Promise<FnReturns.InsertCommentData | null> {
   const url: string = `/video/${key}/comment`
   try {
-    const { data } = await postax<ApiType.CreateComment>(url, params)
+    const { data } = await postax<ApiType.InsertComment>(url, params)
     if (data.code != 0 && data.success == false) {
       ElNotification({
         title: "评论失败", 
@@ -335,11 +335,11 @@ export async function createComment(
       })
       return null
     }
+    return data.data 
   } catch {
     badRequestNotify(url)
     return null 
   }
-  return 'success'
 }
 
 /**

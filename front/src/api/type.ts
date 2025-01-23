@@ -197,6 +197,18 @@ export type Login = {
   token: string 
 }
 
+export type InsertCommentData = {
+  id: number 
+  parentId: number 
+  userId: number 
+  content: string 
+  createdAt: string 
+  user: {
+    username: string 
+    avatar: string 
+  }
+}
+
 export type GetCommentsData = {
   id: number
   parentId: number

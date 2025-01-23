@@ -15,6 +15,7 @@
 <script setup lang="ts">
   import { reactive, defineProps } from 'vue';
   import { UToast, Time, CommentApi, CommentSubmitApi, ConfigApi } from 'undraw-ui';
+  import dayjs from 'dayjs';
 
   import * as Api from '@/api'
 
@@ -35,85 +36,108 @@
     }
   })
   
-  /**
-   * 评论对象数据结构
-   * 存储结构: 一个评论表，通过paretnId是否为空判断类型 评论/回复
-   * 层数: 两层
-   * 第一层：评论 parentId属性为空; 第二层关系: id等于parentId的数据，则为第二层回复的评论数据
-   * 第二层: 回复 parentId属性不为空; 第一层关系: parentId等于第一层id，则为第一层评论的回复数据
-   * 
-   */
-  const comments = [
-    {
-      id: '1',
-      parentId: null,
-      uid: '2',
-      content: '床前明月光，疑是地上霜。<br>举头望明月，低头思故乡。<img class="a" id="a" style="width: 50px" src=a onerror="window.location.href=\'https://baidu.com\'">',
-      createTime: new Time().add(-1, 'day'),
-      user: {
-        username: '李白 [唐代]',
-        avatar: 'https://static.juzicon.com/images/image-231107185110-DFSX.png',
-        homeLink: '/1'
-      },
-      reply: {
-        total: 1,
-        list: [
-        {
-            id: '11',
-            parentId: 1,
-            uid: '1',
-            content: '🤪🤗😒',
-            createTime: new Time().add(-3, 'day'),
-            user: {
-              username: '杜甫 [唐代]',
-              avatar: 'https://static.juzicon.com/images/image-180327173755-IELJ.jpg',
-            }
-          }
-        ]
-      }
-    },
-    {
-      id: '2',
-      parentId: null,
-      uid: '3',
-      content: '国破山河在，城春草木深。<br>感时花溅泪，恨别鸟惊心。<br>烽火连三月，家书抵万金。<br>白头搔更短，浑欲不胜簪。',
-      createTime: new Time().add(-5, 'day'),
-      user: {
-        username: '杜甫 [唐代]',
-        avatar: 'https://static.juzicon.com/images/image-180327173755-IELJ.jpg'
-      }
-    },
-    {
-      id: '3',
-      parentId: null,
-      uid: '2',
-      content: '日照香炉生紫烟，遥看瀑布挂前川。<br>飞流直下三千尺，疑是银河落九天。',
-      likes: 34116,
-      createTime: new Time().add(-2, 'month'),
-      user: {
-        username: '李白 [唐代]',
-        avatar: 'https://static.juzicon.com/images/image-231107185110-DFSX.png',
-        homeLink: '/1'
-      }
-    }
-  ]
+  // /**
+  //  * 评论对象数据结构
+  //  * 存储结构: 一个评论表，通过paretnId是否为空判断类型 评论/回复
+  //  * 层数: 两层
+  //  * 第一层：评论 parentId属性为空; 第二层关系: id等于parentId的数据，则为第二层回复的评论数据
+  //  * 第二层: 回复 parentId属性不为空; 第一层关系: parentId等于第一层id，则为第一层评论的回复数据
+  //  * 
+  //  */
+  // const comments = [
+  //   {
+  //     id: '1',
+  //     parentId: null,
+  //     uid: '2',
+  //     content: '床前明月光，疑是地上霜。<br>举头望明月，低头思故乡。<img class="a" id="a" style="width: 50px" src=a onerror="window.location.href=\'https://baidu.com\'">',
+  //     createTime: new Time().add(-1, 'day'),
+  //     user: {
+  //       username: '李白 [唐代]',
+  //       avatar: 'https://static.juzicon.com/images/image-231107185110-DFSX.png',
+  //       homeLink: '/1'
+  //     },
+  //     reply: {
+  //       total: 1,
+  //       list: [
+  //       {
+  //           id: '11',
+  //           parentId: 1,
+  //           uid: '1',
+  //           content: '🤪🤗😒',
+  //           createTime: new Time().add(-3, 'day'),
+  //           user: {
+  //             username: '杜甫 [唐代]',
+  //             avatar: 'https://static.juzicon.com/images/image-180327173755-IELJ.jpg',
+  //           }
+  //         }
+  //       ]
+  //     }
+  //   },
+  //   {
+  //     id: '2',
+  //     parentId: null,
+  //     uid: '3',
+  //     content: '国破山河在，城春草木深。<br>感时花溅泪，恨别鸟惊心。<br>烽火连三月，家书抵万金。<br>白头搔更短，浑欲不胜簪。',
+  //     createTime: new Time().add(-5, 'day'),
+  //     user: {
+  //       username: '杜甫 [唐代]',
+  //       avatar: 'https://static.juzicon.com/images/image-180327173755-IELJ.jpg'
+  //     }
+  //   },
+  //   {
+  //     id: '3',
+  //     parentId: null,
+  //     uid: '2',
+  //     content: '日照香炉生紫烟，遥看瀑布挂前川。<br>飞流直下三千尺，疑是银河落九天。',
+  //     likes: 34116,
+  //     createTime: new Time().add(-2, 'month'),
+  //     user: {
+  //       username: '李白 [唐代]',
+  //       avatar: 'https://static.juzicon.com/images/image-231107185110-DFSX.png',
+  //       homeLink: '/1'
+  //     }
+  //   }
+  // ]
   
-  // 模拟请求接口获取评论数据
-  setTimeout(() => {
-    // 当前登录用户数据
-    config.user = {
-      id: 1,
-      username: '杜甫 [唐代]',
-      avatar: 'https://static.juzicon.com/images/image-180327173755-IELJ.jpg',
-    }
-    config.comments = comments
-  }, 500)
+  // // 模拟请求接口获取评论数据
+  // setTimeout(() => {
+  //   // 当前登录用户数据
+  //   config.user = {
+  //     id: 1,
+  //     username: '杜甫 [唐代]',
+  //     avatar: 'https://static.juzicon.com/images/image-180327173755-IELJ.jpg',
+  //   }
+  //   config.comments = comments
+  // }, 500)
+
+  // 获取当前登录用户信息
+  
+    // 递归转换函数
+  const transformComment = (comment: any): any => {
+    return {
+      id: comment.id.toString(),
+      parentId: comment.parentId === 0 ? null : comment.parentId.toString(),
+      uid: comment.uid.toString(),
+      content: comment.content,
+      createTime: dayjs(comment.createdAt).toDate(),
+      user: comment.user,
+      reply: comment.reply ? {
+        total: comment.reply.length,
+        list: comment.reply.map((reply: any) => transformComment(reply))
+      } : null
+    };
+  };
+
+  // 转换函数
+  const transformComments = (comments: any[]): any[] => {
+    return comments.map(comment => transformComment(comment));
+  };
 
   // 获取评论数据
   const getComments = async () => {
     const data = await Api.getComments(props.id)
     if (data) {
-      config.comments = data 
+      config.comments = transformComments(data) 
     }
   }
   getComments()
@@ -133,6 +157,17 @@
           message: '评论成功!',
           type: 'info', 
         })
+
+        // 刷新评论
+        finish({
+          id: String(data.id),
+          parentId: String(data.parentId), 
+          uid: String(data.userId), 
+          content: data.content,
+          createTime: data.createdAt, 
+          user: data.user, 
+          reply: null, 
+        })
       }
     }
 
@@ -145,7 +180,12 @@
 .comic-comment {
     &__u {
         background: var(--box-bg-color);
-        color: var(--font-color);
+        // color: var(--font-color);
+    }
+
+    // 深度选择器穿透组件样式
+    ::v-deep .reply-box {
+      background: var(--box-bg-color);
     }
 }
 </style>

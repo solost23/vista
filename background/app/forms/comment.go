@@ -7,6 +7,15 @@ type InsertCommentForm struct {
 	ParentID uint   `json:"parentId"`
 }
 
+type InsertComment struct {
+	ID         uint        `json:"id"`
+	ParentID   uint        `json:"parentId"`
+	UserID     uint        `json:"userId"`
+	Content    string      `json:"content"`
+	CreatedAt  string      `json:"createdAt"`
+	InsertUser CommentUser `json:"user"`
+}
+
 type CommentListForm struct {
 	*utils.PageForm
 	VideoId *uint `form:"videoId" binding:"required"`
@@ -28,22 +37,34 @@ type CommentListForm struct {
 // 	PageList *utils.PageList
 // }
 
-type GetCommentsUser struct {
+type CommentUser struct {
 	Username string `json:"username"`
 	Avatar   string `json:"avatar"`
 }
 
-type GetCommentsReply struct {
-	Total uint                `json:"total"`
-	List  []GetCommentsRecord `json:"list"`
+// type GetCommentsReply struct {
+// 	Total uint                `json:"total"`
+// 	List  []GetCommentsRecord `json:"list"`
+// }
+
+type CommentList struct {
+	Id          uint           `json:"id"`
+	ParentId    uint           `json:"parentId"`
+	CreatorID   uint           `json:"uid"`
+	Content     string         `json:"content"`
+	CreatedAt   string         `json:"createdAt"`
+	CommentUser CommentUser    `json:"user"`
+	Children    []*CommentList `json:"reply"`
 }
 
-type GetCommentsRecord struct {
-	ID              uint               `json:"id"`
-	ParentID        uint               `json:"parentId"`
-	CreatorID       uint               `json:"uid"`
-	Content         string             `json:"content"`
-	CreatedAt       string             `json:"createdAt"`
-	GetCommentsUser GetCommentsUser    `json:"user"`
-	Replys          []GetCommentsReply `json:"reply"`
+func (f *CommentList) ID() uint {
+	return f.Id
+}
+
+func (f *CommentList) ParentID() uint {
+	return f.ParentId
+}
+
+func (f *CommentList) AppendChildren(children any) {
+	f.Children = append(f.Children, children.(*CommentList))
 }

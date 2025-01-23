@@ -275,7 +275,17 @@ export type Login = ApiFormat<{
 
 export type Register = ApiFormat<string> 
 export type DeleteVideo = ApiFormat<string>
-export type CreateComment = ApiFormat<string> 
+export type InsertComment = ApiFormat<{
+  id: number 
+  parentId: number 
+  userId: number 
+  content: string 
+  createdAt: string 
+  user: {
+    username: string 
+    avatar: string 
+  }
+}> 
 export type GetComment = ApiFormat<{
   id: number
   parentId: number
