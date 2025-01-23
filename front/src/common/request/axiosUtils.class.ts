@@ -34,7 +34,6 @@ export default class AxiosUtils {
           loginStore.delUser()
 
           router.push({name: 'Login'})
-          return Promise.reject(new Error('Token 过期'))
         }
         return response
       },
