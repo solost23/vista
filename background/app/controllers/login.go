@@ -16,6 +16,7 @@ type LoginController struct{}
 func LoginRegister(router *gin.RouterGroup) {
 	controller := &LoginController{}
 
+	apiRouter := router.Group("").Use(middlewares.JWTAuth())
 	// 头像上传
 	router.POST("upload", controller.upload)
 	// 注册
@@ -23,8 +24,7 @@ func LoginRegister(router *gin.RouterGroup) {
 	// 登陆
 	router.POST("login", controller.Login)
 	// 登出
-	apiRouter := router.Group("")
-	apiRouter.Use(middlewares.JWTAuth()).DELETE("logout", controller.Logout)
+	apiRouter.DELETE("logout", controller.Logout)
 }
 
 func (controller *LoginController) upload(c *gin.Context) {

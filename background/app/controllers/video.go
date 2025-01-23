@@ -16,27 +16,28 @@ type VideoController struct{}
 func VideoRegister(router *gin.RouterGroup) {
 	controller := &VideoController{}
 
+	apiRouter := router.Group("").Use(middlewares.JWTAuth())
+
 	// 上传视频封面
-	router.POST("upload/cover", controller.uploadCover)
+	apiRouter.POST("upload/cover", controller.uploadCover)
 	// 上传视频
-	router.POST("upload", controller.upload)
+	apiRouter.POST("upload", controller.upload)
 	// 根据名称获取视频列表
 	router.GET("search", controller.search)
-	apiRouter := router.Group("")
 	// 获取动漫详情
 	apiRouter.GET(":id", controller.detail)
 	// 动漫筛选
 	router.GET("filter", controller.filter)
 
 	// 获取视频地址集
-	router.GET(":id/playlist", controller.playlist)
+	apiRouter.GET(":id/playlist", controller.playlist)
 	// 获取动漫配置
 	router.GET("config", controller.config)
 	// 获取混合列表
 	router.GET("index", controller.index)
 
 	// 删除视频
-	apiRouter.Use(middlewares.JWTAuth()).DELETE(":id", controller.delete)
+	apiRouter.DELETE(":id", controller.delete)
 
 	// 创建评论
 	apiRouter.POST(":id/comment", controller.insertComment)
