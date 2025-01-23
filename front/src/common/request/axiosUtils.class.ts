@@ -1,6 +1,7 @@
 import router from '@/entry/index/router'
 import { AxiosInstance } from 'axios'
 import { ElNotification } from 'element-plus'
+import { LoginStore } from '@/stores/login.store'
 /**
  * axios辅助函数
  */
@@ -19,6 +20,22 @@ export default class AxiosUtils {
     this.instance.interceptors.response.use(
       (response) => {
         // store.state.loading = true
+
+        // 检查是否登陆过期
+        if (response.data && (response.data.code === 1999 || response.data.code === 1998)) {
+          ElNotification({
+            type: 'error',
+            title: 'Token 过期',
+            message: '登录过期，请重新登录'
+          })
+
+          const loginStore = LoginStore()
+          loginStore.delToken()
+          loginStore.delUser()
+
+          router.push({name: 'Login'})
+          return Promise.reject(new Error('Token 过期'))
+        }
         return response
       },
       (error) => {
@@ -57,9 +74,9 @@ export default class AxiosUtils {
       //   request.headers['authorization'] = this.getToken()
       // }
 
-      const token = localStorage.getItem('TOKEN');
-      if (token) {
-        request.headers['token'] = token;
+      const loginStore = LoginStore()
+      if (loginStore.getToken()) {
+        request.headers['token'] = loginStore.getToken();
       }
 
       return request

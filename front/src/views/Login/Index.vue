@@ -76,7 +76,7 @@ const login = async () => {
     const loginStore = LoginStore();
     loginStore.saveToken(data.token);
     loginStore.saveUser(data);
-    router.push("/");
+    router.go(-1);
     ElNotification({
       title: '登录成功',
       message: '欢迎回来',

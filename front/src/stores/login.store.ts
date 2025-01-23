@@ -38,12 +38,20 @@ export const LoginStore = defineStore('Login', {
         getToken() {
             return getToken();
         }, 
+        delToken() {
+            this.token = '';
+            localStorage.removeItem(TOKEN_STORE_KEY);
+        }, 
         saveUser(user: Api.Login) {
             this.user = user;
             localStorage.setItem(USER_STORE_KEY, JSON.stringify(user));
         },
         getUser() {
             return getUser();
+        }, 
+        delUser() {
+            this.user = {} as Api.Login;
+            localStorage.removeItem(USER_STORE_KEY);
         }
     }
 })
