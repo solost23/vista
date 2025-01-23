@@ -22,8 +22,9 @@ func VideoRegister(router *gin.RouterGroup) {
 	router.POST("upload", controller.upload)
 	// 根据名称获取视频列表
 	router.GET("search", controller.search)
+	apiRouter := router.Group("")
 	// 获取动漫详情
-	router.GET(":id", controller.detail)
+	apiRouter.GET(":id", controller.detail)
 	// 动漫筛选
 	router.GET("filter", controller.filter)
 
@@ -35,7 +36,6 @@ func VideoRegister(router *gin.RouterGroup) {
 	router.GET("index", controller.index)
 
 	// 删除视频
-	apiRouter := router.Group("")
 	apiRouter.Use(middlewares.JWTAuth()).DELETE(":id", controller.delete)
 
 	// 创建评论
