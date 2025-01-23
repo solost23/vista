@@ -391,13 +391,13 @@ export default defineComponent({
       border-radius: 15px;
       box-shadow: 0 -2px 14px rgb(0 0 0 / 14%);
       transition: all 0.25s;
-      opacity: 0.2;
-      transform: translateY(70%);
+      // opacity: 0.2;
+      // transform: translateY(70%);
 
-      &:hover {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      // &:hover {
+      //   opacity: 1;
+      //   transform: translateY(0);
+      // }
     }
   }
 
