@@ -2,9 +2,9 @@ import { Plugin } from 'vue'
 import UndrawUi from 'undraw-ui'
 import 'undraw-ui/dist/style.css'
 
-const comps = [
-  UndrawUi
-]
+// const comps = [
+//   UndrawUi
+// ]
 
 const plugins = [UndrawUi]
 export const undrawUiInit: Plugin = {

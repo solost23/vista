@@ -7,7 +7,7 @@ import {
   createRouteSCM
 } from '@/class/routeScrollCache.class'
 import { WEB_NAME } from '@/common/static'
-import { ElNotification } from 'element-plus'
+// import { ElNotification } from 'element-plus'
 
 /**
  * 自动导入路由
@@ -48,14 +48,14 @@ router.beforeEach((to, from, next) => {
   // }
 
   // 看视频时检查是否登录，未登录不让看
-  if (to.name === 'ComicMain' && !getToken()) {
-    ElNotification({
-      type: 'error',
-      title: '登录',
-      message: '请先登录'
-    })
-    next({ name: 'Login' })
-  };
+  // if (to.name === 'ComicMain' && !getToken()) {
+  //   ElNotification({
+  //     type: 'error',
+  //     title: '登录',
+  //     message: '请先登录'
+  //   })
+  //   next({ name: 'Login' })
+  // };
   
   next()
 })
